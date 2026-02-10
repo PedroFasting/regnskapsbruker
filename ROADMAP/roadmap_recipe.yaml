@@ -1,0 +1,481 @@
+# Roadmap Recipe: Regnskapsbruker MVP
+# Strategisk utførelsesplan for første syklus
+
+roadmap:
+  id: roadmap-regnskapsbruker-mvp-2026-h1
+  strategy_id: strategy-regnskapsbruker-launch
+  cycle: 1
+  timeframe: "H1 2026 (februar - juni)"
+  status: draft
+  
+  created_at: "2026-02-10"
+  updated_at: "2026-02-10"
+  owner: "Pedro Fasting"
+  
+  # ============================================================================
+  # EXECUTIVE SUMMARY
+  # ============================================================================
+  
+  summary: |
+    MVP-fokus: Løse det aller viktigste problemet først - dokumentjaging.
+    
+    Hypotese: Hvis vi gir regnskapsførere en enkel måte å sende 
+    dokumentforespørsler som kundene faktisk svarer på, vil byrået
+    spare 5+ timer per uke på purring og oppfølging.
+    
+    MVP scope (februar-april):
+    - Regnskapsfører: Opprette dokumentforespørsel med mal
+    - Kunde: Motta varsel, logge inn, laste opp dokument
+    - Begge: Se status og historikk
+    
+    Ikke i MVP:
+    - BankID-signering (kompleks integrasjon, kan ventes)
+    - Flertrinns godkjenning (dekkes manuelt først)
+    - OCR/automatisk kategorisering (nice-to-have)
+    - Mobil-app (responsive web holder)
+
+  # ============================================================================
+  # TRACKS
+  # ============================================================================
+
+  tracks:
+    # --------------------------------------------------------------------------
+    # PRODUCT TRACK
+    # --------------------------------------------------------------------------
+    product:
+      name: "Product Track"
+      focus: "Bygge kjerne-funksjonalitet for dokumentflyt mellom regnskapsfører og kunde"
+      
+      objectives:
+        - id: obj-p-01
+          name: "Validere kjerneproblemet"
+          description: |
+            Bekrefte at dokumentjaging er et reelt problem verdt å løse,
+            og at vår løsning adresserer det på en måte kundene vil bruke.
+          
+          key_results:
+            - id: kr-p-001
+              name: "Brukerintervjuer fullført"
+              description: "Gjennomført 5+ intervjuer med regnskapsførere om dokumenthåndtering"
+              measurement: "Antall intervjuer med innsiktssammendrag"
+              target: "5 intervjuer"
+              baseline: "0"
+              confidence: 0.9
+              
+            - id: kr-p-002
+              name: "Problemvalidering bekreftet"
+              description: "3+ intervjuobjekter bekrefter at dokumentjaging er topp-3 problem"
+              measurement: "Andel som rangerer problemet høyt"
+              target: "60%+ prioriterer dokumentjaging høyt"
+              baseline: "Hypotese, ikke validert"
+              confidence: 0.7
+              
+        - id: obj-p-02
+          name: "Lansere fungerende MVP"
+          description: |
+            Bygge og lansere en minimal løsning som regnskapsførere og
+            kunder faktisk kan bruke til dokumentutveksling.
+          
+          key_results:
+            - id: kr-p-003
+              name: "Dokumentforespørsel-funksjon live"
+              description: "Regnskapsfører kan opprette forespørsel, kunde kan laste opp"
+              measurement: "Feature deployment til produksjon"
+              target: "Funksjon live og brukbar"
+              baseline: "Ikke eksisterende"
+              confidence: 0.8
+              
+            - id: kr-p-004
+              name: "Pilot med 3 regnskapsbyrå"
+              description: "3 byrå bruker løsningen aktivt med sine kunder"
+              target: "3 byrå, minst 10 kunder hver"
+              measurement: "Aktive brukere og dokumenter overført"
+              baseline: "0"
+              confidence: 0.6
+              
+            - id: kr-p-005
+              name: "Positiv NPS fra pilot"
+              description: "Regnskapsførere i pilot gir positiv tilbakemelding"
+              target: "NPS > 20"
+              measurement: "NPS-undersøkelse etter 4 uker"
+              baseline: "N/A"
+              confidence: 0.5
+              
+      assumptions:
+        - id: asm-p-01
+          assumption: "Regnskapsførere vil ta i bruk ny løsning selv om de har eksisterende rutiner"
+          risk_level: high
+          validation_approach: "Pilotering med 3 byrå, måle adopsjon vs drop-off"
+          
+        - id: asm-p-02
+          assumption: "Kunder vil faktisk logge inn og laste opp (ikke ignorere varsler)"
+          risk_level: high
+          validation_approach: "Spore varsel-til-handling-konvertering i pilot"
+          
+        - id: asm-p-03
+          assumption: "E-post + enkel pålogging er tilstrekkelig (trenger ikke BankID ennå)"
+          risk_level: medium
+          validation_approach: "Tilbakemelding fra pilotbrukere om sikkerhetsbehov"
+          
+      solution_scaffold:
+        approach: |
+          Enkel webapp med tre hovedkomponenter:
+          1. Regnskapsfører-dashboard (liste over kunder, opprett forespørsel)
+          2. Kundeportal (se oppgaver, laste opp, se status)
+          3. Varslingssystem (e-post ved ny forespørsel, påminnelser)
+          
+          Teknologi: Next.js/React, Supabase (auth + DB + storage)
+          Hosting: Vercel
+          
+        components:
+          - name: "Auth & brukeradministrasjon"
+            description: "Innlogging for regnskapsfører og kunde, invitasjonsflyt"
+            complexity: medium
+            
+          - name: "Forespørselshåndtering"
+            description: "CRUD for dokumentforespørsler med maler"
+            complexity: medium
+            
+          - name: "Filopplasting"
+            description: "Drag-drop opplasting, forhåndsvisning, lagring"
+            complexity: low
+            
+          - name: "E-postvarsler"
+            description: "Transaksjonell e-post ved hendelser"
+            complexity: low
+            
+          - name: "Status-dashboard"
+            description: "Oversikt for begge brukertyper"
+            complexity: medium
+
+    # --------------------------------------------------------------------------
+    # STRATEGY TRACK
+    # --------------------------------------------------------------------------
+    strategy:
+      name: "Strategy Track"
+      focus: "Definere markedsposisjon og gå-til-marked-strategi"
+      
+      objectives:
+        - id: obj-s-01
+          name: "Forstå konkurranselandskapet"
+          description: |
+            Kartlegge eksisterende løsninger og identifisere differensiering.
+          
+          key_results:
+            - id: kr-s-001
+              name: "Konkurrentanalyse fullført"
+              description: "Dokumentert analyse av 5+ relevante konkurrenter/alternativer"
+              measurement: "Analyse-dokument med styrker/svakheter"
+              target: "5 konkurrenter analysert"
+              baseline: "0"
+              confidence: 0.9
+              
+            - id: kr-s-002
+              name: "Differensiering definert"
+              description: "Klar artikulasjon av hvorfor vår løsning er bedre/annerledes"
+              measurement: "1-pager med differensiering"
+              target: "Ferdig dokument"
+              baseline: "Vag differensiering"
+              confidence: 0.8
+              
+        - id: obj-s-02
+          name: "Etablere første kundepipeline"
+          description: |
+            Identifisere og kontakte potensielle pilot-kunder.
+          
+          key_results:
+            - id: kr-s-003
+              name: "Pilotbyrå rekruttert"
+              description: "3 regnskapsbyrå har sagt ja til pilot"
+              measurement: "Signert intensjonsavtale eller muntlig bekreftelse"
+              target: "3 byrå"
+              baseline: "0 (kun hypotese)"
+              confidence: 0.6
+              
+      assumptions:
+        - id: asm-s-01
+          assumption: "Eksisterende løsninger (Tripletex, 24Seven) løser ikke dokumentproblemet godt nok"
+          risk_level: medium
+          validation_approach: "Konkurrentanalyse + brukerintervjuer"
+          
+      solution_scaffold:
+        approach: |
+          Gå-til-marked via nettverk: ECIT-forbindelser, regnskapsforeninger,
+          LinkedIn outreach til byråledere. Ikke betalt annonsering i MVP-fase.
+
+    # --------------------------------------------------------------------------
+    # ORG_OPS TRACK
+    # --------------------------------------------------------------------------
+    org_ops:
+      name: "Org Ops Track"
+      focus: "Sikre kapasitet og kompetanse til å levere MVP"
+      
+      objectives:
+        - id: obj-o-01
+          name: "Etablere utviklingskapasitet"
+          description: |
+            Sikre at vi har ressurser til å bygge og vedlikeholde MVP.
+          
+          key_results:
+            - id: kr-o-001
+              name: "Utviklerressurs på plass"
+              description: "Minimum én utvikler (heltid eller deltid) dedikert til prosjektet"
+              measurement: "Timer per uke tilgjengelig"
+              target: "20+ timer/uke"
+              baseline: "Kun Pedro (begrensket tid)"
+              confidence: 0.7
+              
+            - id: kr-o-002
+              name: "Tech stack besluttet og satt opp"
+              description: "Utviklingsmiljø, repo, CI/CD på plass"
+              measurement: "Fungerende dev-miljø"
+              target: "Komplett oppsett"
+              baseline: "Kun EPF-repo eksisterer"
+              confidence: 0.9
+              
+      assumptions:
+        - id: asm-o-01
+          assumption: "Vi kan finne/allokere utviklerressurs uten stor investering"
+          risk_level: high
+          validation_approach: "Sjekke interne ressurser i ECIT, eller freelancer-budsjett"
+
+      solution_scaffold:
+        approach: |
+          Alternativ 1: Intern ECIT-utvikler (hvis tilgjengelig)
+          Alternativ 2: Freelancer (estimat: 50-100k for MVP)
+          Alternativ 3: No-code/low-code (Bubble, Retool) for raskere MVP
+
+    # --------------------------------------------------------------------------
+    # COMMERCIAL TRACK
+    # --------------------------------------------------------------------------
+    commercial:
+      name: "Commercial Track"
+      focus: "Definere prismodell og forberede kommersialisering"
+      
+      objectives:
+        - id: obj-c-01
+          name: "Validere betalingsvilje"
+          description: |
+            Forstå hva regnskapsbyrå er villige til å betale og hvordan.
+          
+          key_results:
+            - id: kr-c-001
+              name: "Prismodell-hypoteser testet"
+              description: "Spurt 5+ byrå om prisforventning i intervjuer"
+              measurement: "Samlet innsikt om priselastisitet"
+              target: "Prisintervall identifisert"
+              baseline: "Ren gjetning"
+              confidence: 0.6
+              
+            - id: kr-c-002
+              name: "Foretrukket prismodell identifisert"
+              description: "Besluttet mellom per-kunde, per-bruker, eller flat pris"
+              measurement: "Dokumentert anbefaling"
+              target: "Ett alternativ valgt"
+              baseline: "Alle alternativer åpne"
+              confidence: 0.7
+              
+      assumptions:
+        - id: asm-c-01
+          assumption: "Byrå vil betale 100-500 kr/mnd per aktiv kunde"
+          risk_level: medium
+          validation_approach: "Direkte spørsmål i intervjuer"
+          
+        - id: asm-c-02
+          assumption: "Freemium ikke nødvendig for tidlig adopsjon"
+          risk_level: low
+          validation_approach: "Pilot er gratis, men med forventning om betaling senere"
+
+      solution_scaffold:
+        approach: |
+          MVP er gratis for pilotkunder. Prismodell utvikles basert på 
+          læring fra pilot. Sannsynlig modell: SaaS per byrå med 
+          kundebasert skalering.
+
+  # ============================================================================
+  # CROSS-TRACK DEPENDENCIES
+  # ============================================================================
+  
+  cross_track_dependencies:
+    - from_kr: kr-p-001
+      to_kr: kr-c-001
+      dependency_type: enables
+      description: |
+        Brukerintervjuer (kr-p-001) gir mulighet til å teste 
+        prishypoteser (kr-c-001) i samme samtale.
+        
+    - from_kr: kr-s-003
+      to_kr: kr-p-004
+      dependency_type: requires
+      description: |
+        Pilotbyrå må rekrutteres (kr-s-003) før vi kan kjøre 
+        pilot med dem (kr-p-004). Blokkerende avhengighet.
+        
+    - from_kr: kr-o-002
+      to_kr: kr-p-003
+      dependency_type: requires
+      description: |
+        Tech stack må være på plass (kr-o-002) før vi kan 
+        bygge og deploye funksjonalitet (kr-p-003).
+        
+    - from_kr: kr-s-001
+      to_kr: kr-s-002
+      dependency_type: informs
+      description: |
+        Konkurrentanalyse (kr-s-001) informerer differensiering 
+        (kr-s-002), men differensiering kan startes før analyse er komplett.
+
+  # ============================================================================
+  # EXECUTION PLAN
+  # ============================================================================
+  
+  execution_plan:
+    sequencing_rationale: |
+      Sekvensering prioriterer risikoreduksjon og læring:
+      
+      Fase 1 (februar): Validering og oppsett
+      - Brukerintervjuer først (kr-p-001) for å validere problem
+      - Konkurrentanalyse parallelt (kr-s-001) 
+      - Tech stack oppsett parallelt (kr-o-002)
+      - Rekruttere pilotbyrå starter (kr-s-003)
+      
+      Fase 2 (mars-april): Bygging
+      - Utvikle kjernefunksjonalitet (kr-p-003)
+      - Avhenger av at tech stack er klar og minst 1 pilot rekruttert
+      
+      Fase 3 (mai-juni): Pilot og læring
+      - Kjøre pilot med 3 byrå (kr-p-004)
+      - Samle NPS og tilbakemeldinger (kr-p-005)
+      - Raffinere prismodell basert på læring (kr-c-002)
+      
+      Kritisk sti: kr-o-002 → kr-p-003 → kr-p-004 → kr-p-005
+      Tech stack må være klar for å bygge, bygging må være ferdig for pilot,
+      pilot må kjøre for å få NPS.
+      
+    critical_path:
+      - org_ops:kr-o-002      # Tech stack oppsett
+      - product:kr-p-003      # Dokumentforespørsel live
+      - product:kr-p-004      # Pilot med 3 byrå
+      - product:kr-p-005      # Positiv NPS
+      
+    parallel_tracks:
+      - name: "Validering og innsikt"
+        key_results:
+          - kr-p-001   # Brukerintervjuer
+          - kr-s-001   # Konkurrentanalyse
+          - kr-c-001   # Prishypoteser testet
+        timeframe: "Februar 2026"
+        
+      - name: "Oppsett og rekruttering"
+        key_results:
+          - kr-o-002   # Tech stack
+          - kr-s-003   # Pilotbyrå rekruttert
+          - kr-o-001   # Utviklerressurs
+        timeframe: "Februar-Mars 2026"
+        depends_on: []
+        
+      - name: "Produktutvikling"
+        key_results:
+          - kr-p-003   # Funksjonalitet live
+        timeframe: "Mars-April 2026"
+        depends_on:
+          - kr-o-002
+          
+      - name: "Pilot og kommersialisering"
+        key_results:
+          - kr-p-004   # Pilot kjører
+          - kr-p-005   # NPS målt
+          - kr-s-002   # Differensiering klar
+          - kr-c-002   # Prismodell valgt
+        timeframe: "Mai-Juni 2026"
+        depends_on:
+          - kr-p-003
+          - kr-s-003
+          
+    milestones:
+      - id: ms-001
+        name: "Problem validert"
+        description: "Bekreftet at dokumentjaging er verdt å løse"
+        target_date: "2026-02-28"
+        criteria:
+          - "5 intervjuer gjennomført"
+          - "60%+ bekrefter problemet"
+        key_results:
+          - kr-p-001
+          - kr-p-002
+          
+      - id: ms-002
+        name: "MVP klar for pilot"
+        description: "Fungerende løsning som kan brukes av pilotkunder"
+        target_date: "2026-04-30"
+        criteria:
+          - "Dokumentforespørsel fungerer ende-til-ende"
+          - "Minst 1 pilotbyrå klar til å starte"
+        key_results:
+          - kr-p-003
+          - kr-o-002
+          - kr-s-003
+          
+      - id: ms-003
+        name: "Pilot evaluert"
+        description: "Tilstrekkelig data til å beslutte videre investering"
+        target_date: "2026-06-30"
+        criteria:
+          - "3 byrå har brukt løsningen i 4+ uker"
+          - "NPS målt og analysert"
+          - "Prismodell anbefalt"
+        key_results:
+          - kr-p-004
+          - kr-p-005
+          - kr-c-002
+
+  # ============================================================================
+  # RISK REGISTER
+  # ============================================================================
+  
+  risks:
+    - id: risk-001
+      description: "Ingen tilgjengelig utviklerressurs"
+      probability: medium
+      impact: high
+      mitigation: "Vurdere no-code MVP (Bubble) eller freelancer-budsjett"
+      owner: "Pedro"
+      
+    - id: risk-002
+      description: "Pilotkunder faller fra underveis"
+      probability: medium
+      impact: medium
+      mitigation: "Rekruttere 5 byrå for å ha buffer, tett oppfølging"
+      owner: "Pedro"
+      
+    - id: risk-003
+      description: "Konkurrent lanserer tilsvarende før oss"
+      probability: low
+      impact: medium
+      mitigation: "Fokus på hastighet til pilot, ikke perfeksjon"
+      owner: "Pedro"
+      
+    - id: risk-004
+      description: "Kunder (sluttbrukere) ignorerer varsler og logger ikke inn"
+      probability: medium
+      impact: high
+      mitigation: "Teste ulike varslingskanaler (SMS i tillegg til e-post)"
+      owner: "Pedro"
+
+  # ============================================================================
+  # SUCCESS CRITERIA
+  # ============================================================================
+  
+  success_criteria:
+    mvp_success: |
+      MVP er vellykket hvis:
+      1. Minst 2 av 3 pilotbyrå sier de vil fortsette å bruke løsningen
+      2. Dokumentleveringstid redusert vs baseline (måles i pilot)
+      3. Regnskapsførere rapporterer tidsbesparelse på purring
+      4. Vi har nok innsikt til å beslutte neste fase (skaler eller pivot)
+      
+    failure_indicators: |
+      Stoppkriterier:
+      - Færre enn 3 av 5 intervjuobjekter bekrefter problemet (stopp etter validering)
+      - Ingen pilotbyrå vil starte etter 3 uker med rekruttering (pivot GTM)
+      - NPS < 0 etter 4 uker pilot (fundamentalt produktproblem)

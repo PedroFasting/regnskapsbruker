@@ -1,0 +1,528 @@
+# Konkurrentanalyse: Regnskapsbruker
+# Kartlegging av konkurranselandskapet for dokumenthåndtering i regnskapsbransjen
+
+id: competitor-analysis-v1
+version: "0.1"
+status: draft
+created_at: "2026-02-10"
+updated_at: "2026-02-10"
+
+# ============================================================================
+# EXECUTIVE SUMMARY
+# ============================================================================
+
+summary: |
+  Markedet for regnskapsrelatert dokumenthåndtering er fragmentert. De fleste
+  byrå bruker en kombinasjon av e-post, generiske fildelingsverktøy, og 
+  innebygde funksjoner i regnskapssystemer.
+  
+  Hovedkonkurrenter:
+  1. Status quo (e-post + manuelle rutiner) - vår primære "konkurrent"
+  2. Innebygde kundeportaler i regnskapssystemer (Tripletex, Visma)
+  3. Generiske fildelingsløsninger (Dropbox, Google Drive, SharePoint)
+  4. Spesialiserte dokumentløsninger (FileVault, Penneo)
+  
+  Mulighet: Ingen eksisterende løsning fokuserer spesifikt på 
+  dokumentforespørsels-flyten med automatiske påminnelser og kundevennlig 
+  opplasting. De fleste løser enten regnskapssiden ELLER kundesiden, ikke 
+  samhandlingen mellom dem.
+
+# ============================================================================
+# PRIMÆR KONKURRENT: STATUS QUO
+# ============================================================================
+
+status_quo:
+  description: |
+    De fleste regnskapsbyrå bruker e-post som primær kanal for 
+    dokumentforespørsler. Regnskapsfører skriver e-post, kunde svarer
+    med vedlegg, regnskapsfører lagrer manuelt.
+    
+  typical_workflow:
+    - step: 1
+      action: "Regnskapsfører sender e-post: 'Kan du sende kontoutskrift for mars?'"
+    - step: 2
+      action: "Kunde leser e-post (kanskje), leter etter dokument"
+    - step: 3
+      action: "Kunde svarer med vedlegg (hvis de husker)"
+    - step: 4
+      action: "Regnskapsfører mottar, laster ned, navngir fil, arkiverer"
+    - step: 5
+      action: "Hvis ingen respons: purring etter 3-7 dager"
+    - step: 6
+      action: "Gjenta purring 2-3 ganger, evt. ring"
+      
+  advantages:
+    - "Ingen kostnad (e-post er gratis)"
+    - "Alle vet hvordan e-post fungerer"
+    - "Fleksibelt (kan be om hva som helst)"
+    - "Ingen opplæring nødvendig"
+    
+  pain_points:
+    - "Manuell oppfølging og purring"
+    - "Dokumenter forsvinner i innboks"
+    - "Ingen oversikt over hvem som har levert"
+    - "Kunden vet ikke hva de skal sende"
+    - "Tidssluk: 5-10 timer/uke estimert"
+    
+  our_opportunity: |
+    Erstatte det manuelle purrearbeidet med automatiserte varsler og 
+    påminnelser. Gi regnskapsfører oversikt og kunden tydelig instruksjon.
+
+# ============================================================================
+# REGNSKAPSSYSTEM-INNBYGGEDE LØSNINGER
+# ============================================================================
+
+accounting_system_competitors:
+  - name: "Tripletex Kundeportal"
+    website: "tripletex.no"
+    pricing: "Inkludert i Tripletex-abonnement"
+    
+    description: |
+      Tripletex har innebygd 'Kundetilgang' der kunder kan logge inn
+      og se fakturaer, bilag og rapporter. Fokus på innsyn, ikke på
+      dokumentinnsamling.
+      
+    features:
+      - "Kunden kan se fakturaer og betalingsstatus"
+      - "Kunden kan se bilagshistorikk"
+      - "Begrenset mulighet for opplasting"
+      - "Integrert i Tripletex"
+      
+    strengths:
+      - "Allerede integrert for Tripletex-brukere"
+      - "Ingen ekstra kostnad"
+      - "Kunden ser relevant regnskapsinfo"
+      
+    weaknesses:
+      - "Ikke designet for dokumentforespørsler"
+      - "Ingen automatiske påminnelser for manglende bilag"
+      - "Kundeportalen er komplisert (kunden må navigere i regnskap)"
+      - "Krever at kunden forstår regnskapsterminologi"
+      
+    our_differentiation: |
+      Vi fokuserer på "hva må kunden gjøre NÅ" - ikke på å vise dem 
+      regnskapet. Enklere, oppgavefokusert grensesnitt.
+
+  - name: "Visma eAccounting / Visma.net Autopay"
+    website: "visma.no"
+    pricing: "Varierer per produkt"
+    
+    description: |
+      Visma har ulike produkter med varierende grad av kundetilgang.
+      eAccounting har enkel bilagsopplasting, Autopay fokuserer på
+      betalingsautomatisering.
+      
+    features:
+      - "Bilagsopplasting via e-post til dedikert adresse"
+      - "Autodataregistrering av faktura"
+      - "Begrenset kundeportal i enkelte produkter"
+      
+    strengths:
+      - "Sterk merkevare og distribusjon"
+      - "Integrert i Visma-økosystemet"
+      
+    weaknesses:
+      - "Fragmentert produktlinje"
+      - "Kundetilgang varierer mellom produkter"
+      - "Opplasting via e-post er ikke strukturert (ingen forespørsel-kontekst)"
+      
+    our_differentiation: |
+      Vi er system-agnostiske og kan fungere uansett regnskapssystem.
+      Fokus på forespørsel → levering → bekreftelse flyten.
+
+  - name: "24SevenOffice"
+    website: "24sevenoffice.com"
+    pricing: "Abonnement fra 299 kr/mnd"
+    
+    description: |
+      Skybasert ERP med fokus på automatisering. Har kundemodul og 
+      dokumenthåndtering, men primært for fakturering.
+      
+    features:
+      - "Kundemodul for CRM"
+      - "Dokumentlagring i systemet"
+      - "E-postintegrasjon"
+      
+    strengths:
+      - "Alt-i-ett løsning"
+      - "Moderne, skybasert"
+      
+    weaknesses:
+      - "Kompleks plattform (overkill for dokumentutveksling)"
+      - "Dokumenthåndtering ikke core focus"
+      
+    our_differentiation: |
+      Enklere, mer fokusert løsning for et spesifikt problem.
+
+  - name: "Fiken"
+    website: "fiken.no"
+    pricing: "Fra 89 kr/mnd"
+    
+    description: |
+      Norsk regnskapssystem kjent for enkelhet. Har bilagsopplasting
+      via app og e-post, men begrenset kunde-samhandling.
+      
+    features:
+      - "Enkel bilagsopplasting (mobil og web)"
+      - "Automatisk bokføring av enkelte bilag"
+      - "Primært for enkeltpersonforetak og småbedrifter"
+      
+    strengths:
+      - "Svært brukervennlig"
+      - "Sterkt i ENK-segmentet"
+      
+    weaknesses:
+      - "Lite fokus på byrå-kunde samhandling"
+      - "Liten tilstedeværelse i byrå-markedet"
+      
+    our_differentiation: |
+      Vi er bygget for byrå-kunde-relasjonen, ikke for selskap som 
+      gjør regnskap selv.
+
+# ============================================================================
+# GENERISKE FILDELINGSLØSNINGER
+# ============================================================================
+
+generic_file_sharing:
+  - name: "Dropbox"
+    website: "dropbox.com"
+    pricing: "Fra 119 kr/mnd (Plus)"
+    
+    description: |
+      Generell filsynkronisering og deling. Mange byrå bruker dette for
+      dokumentutveksling - deler mappe med kunden.
+      
+    features:
+      - "Delte mapper"
+      - "Filsynkronisering"
+      - "Kommentering på filer"
+      - "Paper (dokumentsamarbeid)"
+      
+    strengths:
+      - "Velkjent og pålitelig"
+      - "Fungerer på alle plattformer"
+      - "Enkel deling"
+      
+    weaknesses:
+      - "Ingen forespørselslogikk ('send meg dette')"
+      - "Ingen påminnelser"
+      - "Ingen struktur for regnskapsflyt"
+      - "Kunden må vite hvor de skal laste opp"
+      - "Ingen status-tracking"
+      
+    our_differentiation: |
+      Strukturert forespørsel-flyt i stedet for "dump filer i en mappe".
+      Kunden vet nøyaktig hva de skal levere og får påminnelser.
+
+  - name: "Google Drive"
+    website: "drive.google.com"  
+    pricing: "Gratis (15GB) / Workspace fra 60 kr/mnd"
+    
+    description: |
+      Lignende Dropbox, men med bedre samarbeidsverktøy (Docs, Sheets).
+      Brukes av mange byrå for deling.
+      
+    strengths:
+      - "Gratis for mange brukere"
+      - "Integrasjon med Google Workspace"
+      
+    weaknesses:
+      - "Samme som Dropbox: ingen forespørselsflyt"
+      - "Kan være forvirrende for kunder"
+      
+    our_differentiation: |
+      Samme som Dropbox - vi gir struktur og workflow.
+
+  - name: "Microsoft SharePoint / OneDrive"
+    website: "microsoft.com"
+    pricing: "Inkludert i Microsoft 365"
+    
+    description: |
+      Mye brukt i enterprise-sammenheng. SharePoint for strukturert
+      dokumenthåndtering, OneDrive for personlige filer.
+      
+    strengths:
+      - "Allerede i bruk hos mange bedrifter"
+      - "Kraftig tilgangsstyring"
+      - "Integrasjon med Office"
+      
+    weaknesses:
+      - "Komplisert for småbedrifts-kunder"
+      - "Ingen innebygd forespørselsflyt"
+      - "Overkill for enkle dokumentutvekslinger"
+      
+    our_differentiation: |
+      Mye enklere for kunden. De trenger ikke SharePoint-lisens.
+
+# ============================================================================
+# SPESIALISERTE DOKUMENTLØSNINGER
+# ============================================================================
+
+specialized_document_solutions:
+  - name: "Penneo"
+    website: "penneo.com"
+    pricing: "Fra 500 kr/mnd"
+    
+    description: |
+      Dansk løsning for digital signering, mye brukt av revisorer og
+      advokater. Fokus på signaturflyt, ikke dokumentinnsamling.
+      
+    features:
+      - "Digital signering med NemID/BankID"
+      - "Signaturflyt med flere parter"
+      - "Integrasjon med regnskapssystemer"
+      - "Audit trail"
+      
+    strengths:
+      - "Sterkt på signering/revisjon"
+      - "Etablert i Norden"
+      - "Compliance-fokusert"
+      
+    weaknesses:
+      - "Fokus på signering, ikke dokumentinnsamling"
+      - "Dyrt for mindre byrå"
+      - "Ikke for daglig bilagsflyt"
+      
+    our_differentiation: |
+      Vi løser et annet problem: dokumentinnsamling. Signering er 
+      en fremtidig utvidelse, men ikke core MVP.
+
+  - name: "Signicat"
+    website: "signicat.com"
+    pricing: "Enterprise (per signatur)"
+    
+    description: |
+      Plattform for digital identitet og signering. Primært B2B/enterprise,
+      underleverandør til banker og forsikring.
+      
+    features:
+      - "BankID, NemID, andre e-ID"
+      - "Digital signering"
+      - "Identity verification"
+      
+    strengths:
+      - "Markedsleder på e-ID i Norden"
+      - "Robust og sikkert"
+      
+    weaknesses:
+      - "Ikke et sluttbrukerprodukt"
+      - "Kun signering, ikke dokumenthåndtering"
+      
+    our_opportunity: |
+      Vi kan integrere Signicat for BankID-signering når vi utvider.
+
+  - name: "FileVault (Rocketbase)"
+    website: "rocketbase.no"
+    pricing: "Ukjent (kontakt for pris)"
+    
+    description: |
+      Norsk løsning for sikker fildeling, markedsført mot regnskapsførere
+      og revisorer. Sikker portal for dokumentutveksling.
+      
+    features:
+      - "Sikker dokumentlagring"
+      - "Kundetilgang til mapper"
+      - "Norsk løsning, GDPR-compliant"
+      
+    strengths:
+      - "Målrettet mot regnskapsbransjen"
+      - "Norsk support"
+      
+    weaknesses:
+      - "Uklar prising"
+      - "Ser ut som enkel fildeling, ikke forespørselsflyt"
+      - "Usikker på markedsandel"
+      
+    our_differentiation: |
+      Må researches mer. Potensielt direkte konkurrent hvis de har
+      forespørselsfunksjonalitet.
+      
+    action_item: "Registrere for demo og teste"
+
+# ============================================================================
+# INDIREKTE KONKURRENTER / ALTERNATIVER
+# ============================================================================
+
+indirect_competitors:
+  - name: "WhatsApp / SMS"
+    description: |
+      Mange regnskapsførere bruker meldinger for enkel kommunikasjon.
+      Kunden sender bilder av bilag via WhatsApp.
+      
+    strengths:
+      - "Lavterskels for kundene"
+      - "Raskt"
+      
+    weaknesses:
+      - "Ingen struktur"
+      - "Vanskelig å arkivere"
+      - "Ikke profesjonelt"
+      
+  - name: "Papirpost"
+    description: |
+      Fortsatt brukt av noen eldre kunder. Fysiske bilag sendes i posten.
+      
+    strengths:
+      - "Fungerer for de som ikke er digitale"
+      
+    weaknesses:
+      - "Tregt"
+      - "Koster porto"
+      - "Må scannes/digitaliseres"
+      
+  - name: "Slack / Teams"
+    description: |
+      Noen byrå har kunder på Slack/Teams for kommunikasjon.
+      
+    strengths:
+      - "Real-time kommunikasjon"
+      - "Fildeling innebygd"
+      
+    weaknesses:
+      - "Krever at kunden har og bruker verktøyet"
+      - "Ingen forespørselsstruktur"
+      - "Dokumenter forsvinner i chat-historikk"
+
+# ============================================================================
+# KONKURRANSEMATRISE
+# ============================================================================
+
+competitive_matrix:
+  dimensions:
+    - name: "Dokumentforespørsler"
+      description: "Kan be kunden om spesifikt dokument"
+    - name: "Automatiske påminnelser"
+      description: "Varsler kunden automatisk ved ubesvart forespørsel"
+    - name: "Kundevennlighet"
+      description: "Enkel for regnskapskundens sluttbrukere"
+    - name: "Statusoversikt"
+      description: "Regnskapsfører ser hvem som har levert"
+    - name: "Regnskapsfokusert"
+      description: "Bygget for regnskapsflyt, ikke generisk"
+    - name: "Signeringsstøtte"
+      description: "Støtter digital signering (BankID)"
+      
+  comparison:
+    - competitor: "E-post (status quo)"
+      dokumentforesporsler: "Manuell"
+      automatiske_paminnelser: "Nei"
+      kundevennlighet: "Medium"
+      statusoversikt: "Nei"
+      regnskapsfokusert: "Nei"
+      signeringsstotte: "Nei"
+      
+    - competitor: "Tripletex Kundeportal"
+      dokumentforesporsler: "Begrenset"
+      automatiske_paminnelser: "Nei"
+      kundevennlighet: "Lav"
+      statusoversikt: "Delvis"
+      regnskapsfokusert: "Ja"
+      signeringsstotte: "Via partner"
+      
+    - competitor: "Dropbox/Google Drive"
+      dokumentforesporsler: "Nei"
+      automatiske_paminnelser: "Nei"
+      kundevennlighet: "Medium"
+      statusoversikt: "Nei"
+      regnskapsfokusert: "Nei"
+      signeringsstotte: "Nei"
+      
+    - competitor: "Penneo"
+      dokumentforesporsler: "Nei (signering)"
+      automatiske_paminnelser: "Ja (for signering)"
+      kundevennlighet: "Medium"
+      statusoversikt: "Ja (signaturer)"
+      regnskapsfokusert: "Delvis (revisjon)"
+      signeringsstotte: "Ja"
+      
+    - competitor: "Regnskapsbruker (oss)"
+      dokumentforesporsler: "Ja ✓"
+      automatiske_paminnelser: "Ja ✓"
+      kundevennlighet: "Høy ✓"
+      statusoversikt: "Ja ✓"
+      regnskapsfokusert: "Ja ✓"
+      signeringsstotte: "Planlagt (post-MVP)"
+
+# ============================================================================
+# DIFFERENSIERING OG POSISJONERING
+# ============================================================================
+
+differentiation:
+  primary_differentiator: |
+    Regnskapsbruker er den eneste løsningen som kombinerer:
+    1. Strukturerte dokumentforespørsler med maler
+    2. Automatiske påminnelser uten manuelt arbeid
+    3. Kundevennlig portal fokusert på "hva må jeg gjøre nå?"
+    4. Full statusoversikt for regnskapsfører
+    
+  positioning_statement: |
+    For regnskapsbyrå som er lei av å jage dokumenter fra kunder,
+    er Regnskapsbruker en samhandlingsplattform som gjør det enkelt
+    for kunder å levere det som trengs. 
+    
+    I motsetning til e-post (som krever manuell oppfølging), 
+    fildelingsløsninger (som mangler forespørselslogikk), eller 
+    innebygde portaler (som er for komplekse), er Regnskapsbruker 
+    bygget spesifikt for å løse dokumentjagsproblemet.
+    
+  why_now: |
+    - Regnskapsbransjen digitaliserer raskt (cloud-first systemer)
+    - Kunder forventer selvbetjeningsportaler (bankinspirert UX)
+    - AI/automatisering skaper forventning om effektivisering
+    - COVID har akselerert digital samhandling
+
+# ============================================================================
+# TRUSLER OG RISIKO
+# ============================================================================
+
+threats:
+  - threat: "Tripletex/Visma bygger tilsvarende funksjonalitet"
+    probability: medium
+    impact: high
+    mitigation: |
+      Bevege oss raskt til markedet. Bygge merkevare og referanser
+      som gjør oss til foretrukket spesialist. Vurdere partnerskap
+      med regnskapssystemene i stedet for å konkurrere.
+      
+  - threat: "Ny konkurrent med lignende fokus"
+    probability: low
+    impact: medium
+    mitigation: |
+      First-mover advantage i norsk marked. Fokus på 
+      kundetilfredshet og referanser som skaper switching cost.
+      
+  - threat: "E-post forblir 'good enough'"
+    probability: medium
+    impact: high
+    mitigation: |
+      Tydelig ROI-kommunikasjon (timer spart). Pilotresultater 
+      som viser konkret tidsbesparelse.
+
+# ============================================================================
+# HANDLINGER
+# ============================================================================
+
+action_items:
+  immediate:
+    - action: "Registrere for demo av FileVault/Rocketbase"
+      owner: "Pedro"
+      deadline: "2026-02-15"
+      
+    - action: "Teste Tripletex kundeportal som sluttbruker"
+      owner: "Pedro"
+      deadline: "2026-02-15"
+      
+    - action: "Spørre i intervjuer: 'Hva har du prøvd for å løse dette?'"
+      owner: "Pedro"
+      deadline: "Intervjufase"
+      
+  ongoing:
+    - action: "Overvåke produktoppdateringer fra Tripletex, Visma, Fiken"
+      frequency: "Månedlig"
+      
+    - action: "Sjekke Proff.no/Crunchbase for nye konkurrenter"
+      frequency: "Kvartalsvis"
+      
+  post_mvp:
+    - action: "Evaluere integrasjonsmuligheter med regnskapssystemer"
+      trigger: "Etter pilot-evaluering"

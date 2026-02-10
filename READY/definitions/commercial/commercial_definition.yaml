@@ -1,0 +1,379 @@
+# Commercial Definition: Regnskapsbruker
+# Prismodell, go-to-market og kommersielle hypoteser
+
+id: commercial-regnskapsbruker-v1
+name: "Regnskapsbruker Commercial Model"
+status: draft
+version: "0.1"
+created_at: "2026-02-10"
+updated_at: "2026-02-10"
+
+# ============================================================================
+# EXECUTIVE SUMMARY
+# ============================================================================
+
+summary: |
+  Regnskapsbruker er en B2B SaaS-løsning som selges til regnskapsbyrå.
+  Betalingsmodell: Månedlig abonnement basert på antall aktive kunder.
+  
+  Målpris: 149-499 kr/mnd for småbyrå, 999-4999 kr/mnd for mellomstore.
+  
+  Go-to-market: Nettverk og direkte salg i første fase, deretter 
+  bransjespesifikk markedsføring og partnerkjeden.
+
+# ============================================================================
+# TARGET CUSTOMER
+# ============================================================================
+
+target_customer:
+  primary_buyer:
+    role: "Daglig leder eller partner i regnskapsbyrå"
+    characteristics:
+      - "Beslutter over IT-investeringer"
+      - "Opplever dokumentjaging som tidssløseri"
+      - "Villig til å prøve nye verktøy for effektivisering"
+      - "Har 10-100 kunder i porteføljen"
+    pain_points:
+      - "Bruker 5-10 timer/uke på å jage dokumenter fra kunder"
+      - "E-post-kaos med bilag som forsvinner"
+      - "Purringer som irriterer kunder og tar tid"
+      - "Ingen oversikt over hvem som har levert hva"
+      
+  ideal_customer_profile:
+    segment: "Norske regnskapsbyrå med 1-10 ansatte"
+    customer_count: "20-100 aktive kunder"
+    tech_maturity: "Bruker skybasert regnskapssystem (Tripletex, Visma, etc)"
+    decision_cycle: "1-4 uker for småbyrå, 4-12 uker for mellomstore"
+    
+  anti_personas:
+    - description: "Stor regnskapskjede med egen IT-avdeling"
+      reason: "Vil trolig bygge selv eller krever enterprise-tilpasning"
+    - description: "Enkeltmannsbyrå med 5 kunder"
+      reason: "For lite volum til å se verdi, vanskelig å tjene penger"
+    - description: "Byrå som kun gjør særattestasoner/revisjon"
+      reason: "Ikke dokumentintensivt nok, feil segment"
+
+# ============================================================================
+# PRICING MODEL
+# ============================================================================
+
+pricing:
+  model_type: "SaaS subscription with customer-based tiers"
+  
+  philosophy: |
+    Prisen skalerer med verdi: jo flere kunder du håndterer, jo mer 
+    sparer du med vår løsning. Flat pris per tier gjør det enkelt 
+    å forstå og budsjettere.
+    
+  hypothesis: |
+    Regnskapsbyrå er villige til å betale 100-500 kr/mnd per aktiv
+    kunde for en løsning som sparer dem dokumentpurring. Med 
+    gjennomsnittlig 30 kunder og 200 kr/kunde, betyr det 6000 kr/mnd.
+    
+    Men de vil trolig ikke tenke "per kunde" - de vil ha en flat pris.
+    Derfor tier-basert modell som er enklere å kommunisere.
+    
+  tiers:
+    - name: "Starter"
+      target: "Småbyrå med 1-2 ansatte"
+      customer_limit: "Inntil 25 aktive kunder"
+      price_monthly: 499
+      price_annual: 4990  # 2 mnd gratis
+      features:
+        - "Dokumentforespørsler med maler"
+        - "Kundeportal med opplasting"
+        - "E-postvarsler og påminnelser"
+        - "Status-dashboard"
+        - "Grunnleggende arkiv"
+      not_included:
+        - "BankID-signering"
+        - "API-tilgang"
+        - "Flertrinns godkjenning"
+        
+    - name: "Professional"
+      target: "Voksende byrå med 3-5 ansatte"
+      customer_limit: "Inntil 75 aktive kunder"
+      price_monthly: 999
+      price_annual: 9990  # 2 mnd gratis
+      features:
+        - "Alt i Starter"
+        - "BankID-signering (inntil 50 signaturer/mnd inkludert)"
+        - "Flertrinns godkjenning"
+        - "Kundesegmentering"
+        - "Prioritert support"
+      not_included:
+        - "API-tilgang"
+        - "Custom branding"
+        
+    - name: "Business"
+      target: "Etablerte byrå med 5-15 ansatte"
+      customer_limit: "Inntil 200 aktive kunder"
+      price_monthly: 2499
+      price_annual: 24990  # 2 mnd gratis
+      features:
+        - "Alt i Professional"
+        - "Ubegrenset BankID-signering"
+        - "API-tilgang for integrasjoner"
+        - "Tilpasset branding (logo, farger)"
+        - "Avansert rapportering"
+        - "Dedikert onboarding"
+        
+    - name: "Enterprise"
+      target: "Store byrå og kjeder"
+      customer_limit: "Ubegrenset"
+      price_monthly: "Kontakt oss"
+      features:
+        - "Alt i Business"
+        - "SSO/SAML"
+        - "Avansert tilgangsstyring"
+        - "SLA og enterprise support"
+        - "Custom integrasjoner"
+        - "On-premise option"
+        
+  add_ons:
+    - name: "Ekstra BankID-signeringer"
+      price: "15 kr per signatur over inkludert kvote"
+      description: "For Professional-kunder som trenger flere signaturer"
+      
+    - name: "SMS-varsler"
+      price: "0.50 kr per SMS"
+      description: "SMS-påminnelser i tillegg til e-post"
+      
+  pricing_validation:
+    questions_to_test:
+      - "Hva betaler du i dag for lignende løsninger?"
+      - "Hva ville du betrakte som 'billig', 'rimelig', 'dyrt' for dette?"
+      - "Ville du foretrukket per-kunde-pris eller flat månedspris?"
+      - "Ville du betalt mer for BankID-signering inkludert?"
+      
+    van_westendorp_ranges:
+      too_cheap: "Under 200 kr/mnd"
+      cheap: "200-500 kr/mnd"
+      expensive: "1000-2000 kr/mnd"
+      too_expensive: "Over 5000 kr/mnd"
+      note: "Hypoteser - må valideres i intervjuer"
+
+# ============================================================================
+# GO-TO-MARKET STRATEGY
+# ============================================================================
+
+go_to_market:
+  phase_1:
+    name: "Pilot & validering"
+    timeline: "H1 2026"
+    strategy: |
+      Rekruttere 3-5 pilotbyrå gjennom nettverk og personlig outreach.
+      Pilot er gratis mot feedback og case-mulighet.
+      
+    channels:
+      - name: "Personlig nettverk"
+        description: "ECIT-kontakter, tidligere kolleger, bekjente i bransjen"
+        investment: "Kun tid"
+        target: "3 pilotbyrå"
+        
+      - name: "LinkedIn outreach"
+        description: "Personlige meldinger til byråledere"
+        investment: "Tid, evt. LinkedIn Premium"
+        target: "10 samtaler, 2 piloter"
+        
+    success_metrics:
+      - "3 pilotbyrå aktive"
+      - "30+ kunder bruker portal"
+      - "Positiv NPS fra byrå"
+      
+  phase_2:
+    name: "Første betalende kunder"
+    timeline: "H2 2026"
+    strategy: |
+      Konvertere pilotkunder til betalende. Starte begrenset markedsføring
+      for å få første 10-20 betalende kunder.
+      
+    channels:
+      - name: "Pilot-konvertering"
+        description: "Tilby pilotkunder rabattert årspris for å bli betalende"
+        target: "2-3 konverteringer"
+        
+      - name: "Referanser"
+        description: "Be pilotbyrå referere kollegaer"
+        incentive: "1 måned gratis per referanse som blir kunde"
+        target: "5 referanser"
+        
+      - name: "Bransjemedia"
+        description: "Artikler/annonser i Regnskap Norge, Finansfokus"
+        investment: "10-30k"
+        target: "Awareness, 50+ leads"
+        
+    success_metrics:
+      - "10 betalende kunder"
+      - "30k+ MRR"
+      - "CAC under 5000 kr"
+      
+  phase_3:
+    name: "Skalering"
+    timeline: "2027"
+    strategy: |
+      Skalere kunde-akkvisisjon gjennom kombinasjon av inbound marketing,
+      partnerskap og evt. direkte salg.
+      
+    channels:
+      - name: "Content marketing"
+        description: "Blogg, guides, webinarer om effektiv kundehåndtering"
+        goal: "Bygge autoritet og generere inbound leads"
+        
+      - name: "Regnskapssystem-partnere"
+        description: "Integrasjonspartnerskap med Tripletex, Visma, etc"
+        goal: "Synlighet i ecosystem, co-marketing"
+        
+      - name: "Regnskap Norge-samarbeid"
+        description: "Medlemsrabatt, tilstedeværelse på arrangementer"
+        goal: "Bransjetillit og distribusjon"
+
+# ============================================================================
+# UNIT ECONOMICS
+# ============================================================================
+
+unit_economics:
+  assumptions:
+    average_revenue_per_account: 1200 # kr/mnd, blanding av tiers
+    gross_margin: 0.85 # Infrastruktur-kost ca 15%
+    customer_acquisition_cost: 3000 # kr (inkl. tid og markedsføring)
+    churn_monthly: 0.02 # 2% månedlig churn (hypotese)
+    customer_lifetime: 50 # måneder (1/churn-rate)
+    
+  calculated:
+    ltv: 51000 # 1200 * 50 * 0.85
+    ltv_cac_ratio: 17 # 51000 / 3000 (bør være > 3)
+    payback_months: 2.5 # 3000 / 1200
+    
+  notes: |
+    Disse er hypoteser basert på typiske B2B SaaS-tall. Må valideres med 
+    faktiske data etter pilot. LTV/CAC på 17 er usannsynlig høyt - 
+    trolig undervurderer vi CAC eller overvurderer livslengde.
+    
+    Kritiske ting å måle i pilot:
+    - Faktisk churn (hvor mange slutter etter gratis periode?)
+    - Tid til konvertering (hvor lang er salgssyklusen?)
+    - Ekspansjonsreveny (oppgraderer kunder over tid?)
+
+# ============================================================================
+# SALES PROCESS
+# ============================================================================
+
+sales_process:
+  model: "Product-led growth med sales-assist"
+  
+  description: |
+    Primært selvbetjent onboarding (kunden registrerer seg selv), men 
+    med mulighet for demo og sales-samtale for større byrå.
+    
+  stages:
+    - name: "Awareness"
+      description: "Bytå oppdager løsningen"
+      channels: ["Content", "Referanser", "Annonser", "Bransjemedia"]
+      conversion_target: "5% til Lead"
+      
+    - name: "Lead"
+      description: "Byrå viser interesse (besøker site, laster ned guide)"
+      actions: ["Email nurturing", "Retargeting"]
+      conversion_target: "20% til Trial"
+      
+    - name: "Trial"
+      description: "Byrå registrerer seg for gratis prøveperiode"
+      trial_length: "14 dager"
+      actions: ["Onboarding-emails", "In-app tips", "Check-in på dag 7"]
+      conversion_target: "25% til Paying"
+      
+    - name: "Paying"
+      description: "Byrå blir betalende kunde"
+      actions: ["Success onboarding", "Kvartalsvis check-in"]
+      
+    - name: "Expansion"
+      description: "Kunde oppgraderer tier eller kjøper add-ons"
+      triggers: ["Nærmer seg kundelimit", "Bruker mange signaturer"]
+      
+  sales_assist:
+    when_to_engage:
+      - "Byrå med 50+ kunder (potensielt Business-tier)"
+      - "Forespørsel om enterprise-features"
+      - "Byrå som ikke konverterer etter trial"
+    process:
+      - "15-min kvalifisering-samtale"
+      - "Demo (30 min)"
+      - "Tilbud med evt. rabatt"
+      - "Oppfølging innen 48 timer"
+
+# ============================================================================
+# COMPETITIVE POSITIONING
+# ============================================================================
+
+competitive_positioning:
+  positioning_statement: |
+    For regnskapsbyrå som er lei av å jage dokumenter fra kunder,
+    er Regnskapsbruker en samhandlingsplattform som gjør det enkelt
+    for kunder å levere det som trengs. I motsetning til generiske 
+    fildelingsløsninger eller e-post, er Regnskapsbruker bygget 
+    spesifikt for regnskapsfløten med maler, påminnelser og status-sporing.
+    
+  key_differentiators:
+    - differentiator: "Bygget for regnskapsflyt"
+      vs_competitors: |
+        Dropbox/Google Drive er generiske fildelings-verktøy uten 
+        forespørselslogikk. Tripletex har kundeportal, men fokusert 
+        på regnskap, ikke dokumentsamling.
+        
+    - differentiator: "Automatiske påminnelser"
+      vs_competitors: |
+        E-post krever manuell oppfølging. Vi automatiserer purringen
+        slik at regnskapsfører slipper.
+        
+    - differentiator: "Kundevennlig opplasting"
+      vs_competitors: |
+        Mange regnskapssystemer krever at kunden navigerer i kompleks
+        UI. Vårt kundeportal er enkelt: "Du har 2 oppgaver. Klikk her."
+        
+    - differentiator: "Norsk og GDPR-compliant"
+      vs_competitors: |
+        Mange globale løsninger har uklar datahåndtering. Vi lagrer 
+        alt i EU/Norge og er bygget for norsk marked.
+
+# ============================================================================
+# RISK & ASSUMPTIONS
+# ============================================================================
+
+commercial_risks:
+  - risk: "Regnskapsbyrå ønsker ikke betale for 'enda et verktøy'"
+    mitigation: "Fokusere tungt på ROI (tidsbesparelse) i kommunikasjon"
+    validation: "Spørre direkte i intervjuer om betalingsvilje"
+    
+  - risk: "Tripletex/Visma bygger tilsvarende funksjonalitet"
+    mitigation: "Bevege oss raskt, bygge merkevare og referanser"
+    validation: "Overvåke produktoppdateringer fra hovedaktører"
+    
+  - risk: "Churn høyere enn antatt"
+    mitigation: "Fokus på onboarding og tidlig verdi"
+    validation: "Måle aktivering og engasjement i pilot"
+    
+  - risk: "Salgssyklus lengre enn antatt"
+    mitigation: "Low-touch self-serve som primær kanal"
+    validation: "Spore tid fra lead til betalende"
+
+key_assumptions:
+  - id: ca-001
+    assumption: "Regnskapsbyrå opplever dokumentjaging som signifikant tidssløseri"
+    confidence: medium
+    validation: "Brukerintervjuer (5+)"
+    
+  - id: ca-002
+    assumption: "Byrå er villige til å betale 500-2500 kr/mnd for løsningen"
+    confidence: low
+    validation: "Prissensitivitetstest i intervjuer"
+    
+  - id: ca-003
+    assumption: "Sluttbrukere (kunder) vil faktisk logge inn og bruke portalen"
+    confidence: low
+    validation: "Pilotering med reelle brukere"
+    
+  - id: ca-004
+    assumption: "Konkurrentene (Tripletex et al.) har ikke løst dette godt nok"
+    confidence: medium
+    validation: "Konkurrentanalyse + brukerfeedback"

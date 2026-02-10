@@ -1,0 +1,451 @@
+# Brukervalideringsguide: Regnskapsbruker
+# Intervjuguide og valideringsplan
+
+id: user-validation-guide-v1
+version: "0.1"
+status: draft
+created_at: "2026-02-10"
+
+# ============================================================================
+# MÅL OG HYPOTESER
+# ============================================================================
+
+validation_goals:
+  primary:
+    - "Bekrefte at dokumentjaging er et reelt problem verdt å løse"
+    - "Forstå nåværende arbeidsflyt og smertepunkter"
+    - "Validere at vår løsningsidé adresserer problemet"
+    - "Teste betalingsvilje og prisforventninger"
+    
+  secondary:
+    - "Identifisere tidlige pilotkunder"
+    - "Samle quotes og historier til markedsføring"
+    - "Oppdage ukjente problemer vi kan løse"
+
+key_hypotheses:
+  - id: hyp-001
+    hypothesis: "Regnskapsførere bruker 5+ timer/uke på å jage dokumenter fra kunder"
+    validation_criteria: "3+ av 5 intervjuobjekter bekrefter dette"
+    questions_to_ask:
+      - Q3 (Tidsforbruk på dokumentjaging)
+      
+  - id: hyp-002
+    hypothesis: "E-post er primær kanal for dokumentinnsamling og skaper kaos"
+    validation_criteria: "Flertallet nevner e-post som hovedproblem"
+    questions_to_ask:
+      - Q4 (Nåværende verktøy)
+      - Q5 (Største frustrasjon)
+      
+  - id: hyp-003
+    hypothesis: "Kundene (regnskapskunder) ønsker enklere måte å levere på"
+    validation_criteria: "Regnskapsførere rapporterer at kundene klager/sliter"
+    questions_to_ask:
+      - Q6 (Tilbakemelding fra kunder)
+      
+  - id: hyp-004
+    hypothesis: "Byrå vil betale 500-2500 kr/mnd for løsningen"
+    validation_criteria: "Prisintervall overlapper med vårt forslag"
+    questions_to_ask:
+      - Q11-Q13 (Prisspørsmål)
+      
+  - id: hyp-005
+    hypothesis: "Eksisterende løsninger (Tripletex, etc) løser ikke problemet godt nok"
+    validation_criteria: "Selv de som bruker disse verktøyene har fortsatt problemet"
+    questions_to_ask:
+      - Q4 (Nåværende verktøy)
+      - Q7 (Hva har du prøvd)
+
+# ============================================================================
+# REKRUTTERING
+# ============================================================================
+
+recruitment:
+  target_profile:
+    description: "Regnskapsførere i norske byrå med 10-100 kunder"
+    inclusion_criteria:
+      - "Jobber aktivt med kundeoppfølging"
+      - "Beslutningstagere eller kan påvirke verktøyvalg"
+      - "Bruker skybasert regnskapssystem"
+    exclusion_criteria:
+      - "Rent revisjonsarbeid (ikke regnskapsføring)"
+      - "Kun lønn/HR-tjenester"
+      - "Veldig store byrå (100+ ansatte) med egne systemer"
+      
+  sample_size: "5-8 intervjuer"
+  
+  recruitment_channels:
+    - channel: "Personlig nettverk"
+      approach: "Kontakte regnskapsførere via ECIT-forbindelser"
+      script: |
+        Hei [Navn],
+        
+        Jeg jobber med et prosjekt om samhandling mellom regnskapsførere og 
+        kunder, og leter etter noen som kan dele sine erfaringer. 
+        
+        Kunne du tenke deg en 30-minutters prat om hvordan du håndterer 
+        dokumentinnsamling fra kunder? Ingen salg, kun research.
+        
+        Takk på forhånd!
+        Pedro
+        
+    - channel: "LinkedIn"
+      approach: "Søk på 'regnskapsfører' i Norge, personlig melding"
+      script: |
+        Hei [Navn],
+        
+        Jeg ser at du jobber som regnskapsfører hos [Byrå]. Jeg holder på med
+        et forskningsprosjekt om hverdagen til regnskapsførere - spesielt 
+        rundt dokumenthåndtering og kundekommunikasjon.
+        
+        Har du 30 minutter til en uformell prat? Jeg vil gjerne høre om dine 
+        erfaringer. Ingen salgspitch, kun ærlig research.
+        
+        Hilsen Pedro
+        
+    - channel: "Regnskapsbransjen.no forum"
+      approach: "Innlegg med forespørsel om deltakere"
+      
+  incentive: "Kaffekopp/gavekort 200 kr (valgfritt, vurder per tilfelle)"
+
+# ============================================================================
+# INTERVJUGUIDE
+# ============================================================================
+
+interview_guide:
+  duration: "30-45 minutter"
+  format: "Semi-strukturert samtale"
+  mode: "Videomøte (Teams/Zoom) eller telefon"
+  
+  preparation:
+    before_interview:
+      - "Research personen/byrået på LinkedIn og nettsider"
+      - "Forbered notatdokument med spørsmålsliste"
+      - "Test opptak hvis du vil ta opp (be om samtykke)"
+      
+    setup:
+      - "Still innledende spørsmål for å bygge rapport"
+      - "Forklar formålet: 'Vi undersøker hvordan vi kan gjøre regnskapsarbeid enklere'"
+      - "Gjør det klart: dette er ikke et salgssamtale"
+      
+  questions:
+    intro:
+      - id: Q1
+        question: "Kan du starte med å fortelle litt om deg selv og byrået ditt?"
+        purpose: "Kontekst og oppvarming"
+        follow_ups:
+          - "Hvor mange ansatte har dere?"
+          - "Omtrent hvor mange kunder håndterer du personlig?"
+          - "Hvilken type kunder (AS, ENK, osv)?"
+          
+    current_workflow:
+      - id: Q2
+        question: "Kan du ta meg gjennom en typisk uke - hva bruker du tiden på?"
+        purpose: "Forstå overordnet arbeidsflyt og prioriteringer"
+        follow_ups:
+          - "Hva tar mest tid?"
+          - "Hva frustrerer deg mest?"
+          
+      - id: Q3
+        question: "Hvor mye tid vil du si at du bruker på å samle inn dokumenter og bilag fra kunder?"
+        purpose: "Validere tidshypotese (hyp-001)"
+        follow_ups:
+          - "Er det timer per uke, eller...?"
+          - "Varierer det mye fra uke til uke?"
+          - "Hva med purringer og oppfølging - er det inkludert?"
+          
+      - id: Q4
+        question: "Hvordan samler du inn dokumenter fra kundene i dag? Hvilke verktøy bruker du?"
+        purpose: "Kartlegge nåsituasjon og konkurranselandskap"
+        follow_ups:
+          - "Hva fungerer bra med dette?"
+          - "Hva fungerer dårlig?"
+          - "Har du prøvd andre metoder?"
+          
+    pain_points:
+      - id: Q5
+        question: "Hva er din største frustrasjon når det gjelder å få det du trenger fra kundene?"
+        purpose: "Identifisere kjerneproblem (hyp-002)"
+        follow_ups:
+          - "Kan du gi et eksempel?"
+          - "Hvor ofte skjer dette?"
+          - "Hva gjør du når det skjer?"
+          
+      - id: Q6
+        question: "Hva hører du fra kundene? Klager de noen gang på hvordan ting fungerer?"
+        purpose: "Forstå kundeperspektivet (hyp-003)"
+        follow_ups:
+          - "Hva sliter de med?"
+          - "Har du mistet kunder på grunn av slike ting?"
+          
+      - id: Q7
+        question: "Har du prøvd å løse disse problemene? Hva har du forsøkt?"
+        purpose: "Forstå tidligere løsningsforsøk og konkurranseflaten"
+        follow_ups:
+          - "Hvorfor fungerte det / fungerte det ikke?"
+          - "Hva ville gjort det bedre?"
+          
+    solution_exploration:
+      - id: Q8
+        question: |
+          Tenk deg en løsning der du kunne sende en forespørsel til kunden, 
+          og de fikk en enkel portal der de bare trenger å laste opp det 
+          du ba om. Automatiske påminnelser hvis de glemmer. 
+          Hva tenker du om det?
+        purpose: "Teste løsningsideen"
+        follow_ups:
+          - "Ville dette hjulpet deg?"
+          - "Hva ville vært viktigst for deg i en slik løsning?"
+          - "Hva ser du som potensielle problemer?"
+          
+      - id: Q9
+        question: "Hvis du kunne ønske deg én feature for å gjøre dokumenthåndtering enklere, hva ville det vært?"
+        purpose: "Identifisere prioriteringer"
+        follow_ups:
+          - "Hvorfor akkurat det?"
+          
+      - id: Q10
+        question: "Hvor skeptisk tror du kundene dine ville vært til å bruke en ny portal?"
+        purpose: "Validere adopsjonshypotese"
+        follow_ups:
+          - "Ville eldre kunder slitt?"
+          - "Hva skulle til for at de ville brukt det?"
+          
+    pricing:
+      - id: Q11
+        question: "Hva betaler du i dag for programvare/verktøy i tillegg til regnskapssystemet?"
+        purpose: "Benchmark for betalingsvilje"
+        follow_ups:
+          - "Hva får du for pengene?"
+          - "Føler du at du får valuta for pengene?"
+          
+      - id: Q12
+        question: "Hvis en løsning som vi snakket om fantes - hva ville du forvente at det kostet?"
+        purpose: "Prisforventning (upåvirket)"
+        note: "Merk: ikke nevn noen priser før dette spørsmålet"
+        
+      - id: Q13
+        question: |
+          Tenk på fire prisnivåer: 
+          - Ved hvilken pris ville du tenkt 'dette er for billig til å være bra'?
+          - Ved hvilken pris ville det være en 'god deal'?
+          - Ved hvilken pris begynner det å bli dyrt?
+          - Ved hvilken pris ville du sagt 'dette er for dyrt, glem det'?
+        purpose: "Van Westendorp prissensitivitet"
+        follow_ups:
+          - "Månedlig eller årlig - hva foretrekker du?"
+          - "Per-kunde-pris eller flat pris - preferanse?"
+          
+    closing:
+      - id: Q14
+        question: "Er det noe annet du vil nevne som vi ikke har snakket om?"
+        purpose: "Fange opp uventede innsikter"
+        
+      - id: Q15
+        question: "Kjenner du noen andre regnskapsførere som kunne vært interessert i å snakke med oss?"
+        purpose: "Snøball-rekruttering"
+        
+      - id: Q16
+        question: |
+          Vi kommer til å bygge en pilot av dette i løpet av våren. 
+          Hvis det var interessant, ville du vært åpen for å teste det ut med noen av kundene dine?
+        purpose: "Identifisere pilotkunder"
+        follow_ups:
+          - "Hva skulle til for at du sa ja?"
+          - "Hvor mange kunder ville du vært komfortabel med å teste på?"
+
+# ============================================================================
+# NOTATMAL
+# ============================================================================
+
+note_template: |
+  # Intervju: [Navn]
+  Dato: [Dato]
+  Byrå: [Byrånavn]
+  Varighet: [XX minutter]
+  
+  ## Kontekst
+  - Rolle: 
+  - Antall ansatte i byrå:
+  - Antall kunder:
+  - Kundetyper:
+  - Regnskapssystem:
+  
+  ## Hovedfunn
+  
+  ### Tidsbruk på dokumentjaging
+  - Timer/uke: 
+  - Inkluderer: 
+  
+  ### Nåværende verktøy
+  - Bruker:
+  - Fungerer bra:
+  - Fungerer dårlig:
+  
+  ### Største frustrasjon
+  - Hovedproblem:
+  - Eksempel:
+  - Frekvens:
+  
+  ### Kundens perspektiv
+  - Hva sliter kundene med:
+  - Tilbakemeldinger:
+  
+  ### Reaksjon på løsningsidé
+  - Første reaksjon:
+  - Ville det hjulpet:
+  - Bekymringer:
+  - Viktigste feature:
+  
+  ### Pris
+  - Nåværende verktøykostnader:
+  - Forventet pris for løsningen:
+  - Van Westendorp:
+    - For billig: 
+    - God deal:
+    - Dyrt:
+    - For dyrt:
+  - Betalingsmodell-preferanse:
+  
+  ### Pilot-interesse
+  - Interessert: Ja/Nei/Kanskje
+  - Antall kunder for test:
+  - Forutsetninger:
+  
+  ## Sitater (verbatim)
+  - "..."
+  - "..."
+  
+  ## Overraskelser / Uventede funn
+  - 
+  
+  ## Oppfølging
+  - [ ] Send takke-melding
+  - [ ] Referanse til andre:
+  - [ ] Pilot-oppfølging:
+
+# ============================================================================
+# ANALYSE OG SYNTESE
+# ============================================================================
+
+analysis_framework:
+  after_each_interview:
+    - "Fyll ut notatmalen samme dag"
+    - "Marker sterke sitater"
+    - "Noter overraskelser som kan endre hypoteser"
+    
+  after_all_interviews:
+    pattern_analysis:
+      - question: "Hvor mange bekrefter tidshypotesen (5+ timer/uke)?"
+        threshold: "3 av 5"
+        
+      - question: "Hva er konsistent smertepunkt på tvers av intervjuer?"
+        look_for: "Gjentatte temaer i Q5"
+        
+      - question: "Hva er prisspredningen?"
+        analyze: "Lag Van Westendorp-diagram"
+        
+      - question: "Hvor mange er interessert i pilot?"
+        threshold: "Minimum 3 for å gå videre"
+        
+    output_documents:
+      - name: "Innsiktssammendrag"
+        contains:
+          - "Hovedfunn per hypotese (bekreftet/avkreftet)"
+          - "Top 3 smertepunkter"
+          - "Prisanbefaling basert på data"
+          - "Liste over pilotkandidater"
+          
+      - name: "Persona-oppdatering"
+        contains:
+          - "Juster personas basert på reelle sitater og historier"
+          
+      - name: "Feature-prioritering"
+        contains:
+          - "Hvilke features er 'must-have' basert på intervjuer"
+          - "Hva kan vente til post-MVP"
+
+# ============================================================================
+# GO/NO-GO KRITERIER
+# ============================================================================
+
+decision_criteria:
+  proceed_if:
+    - "3+ av 5 bekrefter dokumentjaging er signifikant problem"
+    - "Løsningsidé får positiv respons fra flertallet"
+    - "Prisforventning overlapper med vårt intervall (500-2500 kr)"
+    - "Minst 2 konkrete pilotinteresserte"
+    
+  pivot_if:
+    - "Problemet er mindre enn antatt (< 2 timer/uke)"
+    - "Eksisterende løsninger dekker behovet godt"
+    - "Prisforventning under 200 kr/mnd"
+    
+  stop_if:
+    - "Ingen bekrefter problemet"
+    - "Alle sier de har løst det allerede"
+    - "Ingen interesse for pilot"
+
+# ============================================================================
+# TIDSPLAN
+# ============================================================================
+
+timeline:
+  week_1:
+    - "Rekruttere 5-8 intervjukandidater"
+    - "Sende ut invitasjoner"
+    - "Gjennomføre 2-3 intervjuer"
+    
+  week_2:
+    - "Gjennomføre resterende intervjuer"
+    - "Fylle ut notater"
+    
+  week_3:
+    - "Analysere funn"
+    - "Skrive innsiktssammendrag"
+    - "Oppdatere hypoteser og personas"
+    - "Beslutning: GO/PIVOT/STOP"
+
+# ============================================================================
+# RESSURSER
+# ============================================================================
+
+resources:
+  reading:
+    - title: "The Mom Test"
+      author: "Rob Fitzpatrick"
+      why: "Hvordan stille spørsmål som gir ærlige svar, ikke komplimenter"
+      key_takeaway: "Snakk om deres liv, ikke din idé"
+      
+    - title: "Talking to Humans"
+      author: "Giff Constable"
+      why: "Praktisk guide til kundeintervjuer"
+      
+  tools:
+    - name: "Notion/Google Docs"
+      purpose: "Notater og syntese"
+      
+    - name: "Otter.ai"
+      purpose: "Automatisk transkripsjon av opptak (valgfritt)"
+      
+    - name: "Calendly"
+      purpose: "Enkel booking av intervjutider"
+
+# ============================================================================
+# ETIKK OG SAMTYKKE
+# ============================================================================
+
+ethics:
+  consent:
+    - "Be om muntlig samtykke før opptak"
+    - "Forklar at deltakelse er frivillig"
+    - "Gjør det klart at de kan avbryte når som helst"
+    
+  data_handling:
+    - "Ikke del personidentifiserbar informasjon"
+    - "Anonymiser sitater før deling eksternt"
+    - "Slett opptak etter transkripsjon om ønsket"
+    
+  transparency:
+    - "Vær ærlig om formålet (produktutvikling)"
+    - "Ingen skjult agenda"
+    - "Del gjerne funn med deltakerne etterpå"

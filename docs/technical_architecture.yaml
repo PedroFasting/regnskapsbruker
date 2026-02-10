@@ -1,0 +1,597 @@
+# Technical Architecture: Regnskapsbruker MVP
+# Arkitektur, teknologivalg og integrasjoner
+
+id: tech-architecture-v1
+version: "0.1"
+status: draft
+created_at: "2026-02-10"
+updated_at: "2026-02-10"
+
+# ============================================================================
+# EXECUTIVE SUMMARY
+# ============================================================================
+
+summary: |
+  MVP-arkitektur fokuserer på hastighet til marked, lave driftskostnader,
+  og enkelhet. Vi velger moderne, velprøvde teknologier som en utvikler
+  kan håndtere effektivt.
+  
+  Stack: Next.js + Supabase + Vercel
+  
+  Fordeler: Rask utvikling, innebygd auth, skalerbar, lav driftskost.
+  Ulemper: Vendor lock-in til Supabase/Vercel (akseptabelt for MVP).
+
+# ============================================================================
+# ARCHITECTURE OVERVIEW
+# ============================================================================
+
+architecture:
+  style: "Monolith-first, modular design"
+  
+  philosophy: |
+    For MVP velger vi enkelhet over skalerbarhet. En monolittisk 
+    applikasjon er enklere å utvikle, deploye og debugge enn 
+    microservices. Vi strukturerer koden modulært slik at vi KAN
+    splitte senere om nødvendig.
+    
+  high_level_components:
+    - name: "Web Application"
+      description: "Next.js app som serverer både regnskapsfører-frontend og kundeportal"
+      technology: "Next.js 14 (App Router)"
+      
+    - name: "Backend/API"
+      description: "API routes i Next.js, server actions for mutations"
+      technology: "Next.js API routes + Supabase client"
+      
+    - name: "Database"
+      description: "Relasjonsdatabase for alle data"
+      technology: "Supabase (PostgreSQL)"
+      
+    - name: "File Storage"
+      description: "Dokumentlagring med sikker tilgang"
+      technology: "Supabase Storage"
+      
+    - name: "Authentication"
+      description: "Brukerautentisering og sesjonshåndtering"
+      technology: "Supabase Auth"
+      
+    - name: "Email"
+      description: "Transaksjonell e-post for varsler"
+      technology: "Resend eller Supabase Edge Functions + SMTP"
+
+  deployment:
+    hosting: "Vercel"
+    database: "Supabase (hosted)"
+    domain: "regnskapsbruker.no (eller lignende)"
+    environments:
+      - name: "Development"
+        url: "localhost:3000"
+      - name: "Staging"
+        url: "staging.regnskapsbruker.no"
+      - name: "Production"
+        url: "app.regnskapsbruker.no"
+
+# ============================================================================
+# DATA MODEL
+# ============================================================================
+
+data_model:
+  entities:
+    - name: "Organization"
+      description: "Regnskapsbyrå"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: name
+          type: string
+          required: true
+        - name: org_number
+          type: string
+          description: "Organisasjonsnummer"
+        - name: plan
+          type: enum
+          values: ["trial", "starter", "professional", "business", "enterprise"]
+        - name: created_at
+          type: timestamp
+        - name: settings
+          type: jsonb
+          description: "Organisasjon-spesifikke innstillinger"
+          
+    - name: "User"
+      description: "Bruker (regnskapsfører eller systemadmin)"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: email
+          type: string
+          required: true
+          unique: true
+        - name: name
+          type: string
+        - name: organization_id
+          type: uuid
+          foreign_key: Organization.id
+        - name: role
+          type: enum
+          values: ["admin", "accountant", "viewer"]
+        - name: created_at
+          type: timestamp
+          
+    - name: "Client"
+      description: "Regnskapskundens bedrift"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: organization_id
+          type: uuid
+          foreign_key: Organization.id
+          description: "Hvilket byrå som eier kunden"
+        - name: name
+          type: string
+          required: true
+        - name: org_number
+          type: string
+        - name: segment
+          type: enum
+          values: ["AS", "ENK", "NUF", "other"]
+        - name: primary_contact_email
+          type: string
+        - name: status
+          type: enum
+          values: ["active", "inactive", "archived"]
+        - name: created_at
+          type: timestamp
+          
+    - name: "ClientUser"
+      description: "Bruker som tilhører en kunde (kan logge inn i portal)"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: email
+          type: string
+          required: true
+        - name: name
+          type: string
+        - name: invited_at
+          type: timestamp
+        - name: activated_at
+          type: timestamp
+        - name: last_login
+          type: timestamp
+          
+    - name: "DocumentRequest"
+      description: "Forespørsel om dokument fra regnskapsfører til kunde"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: created_by
+          type: uuid
+          foreign_key: User.id
+        - name: template_id
+          type: uuid
+          foreign_key: RequestTemplate.id
+          nullable: true
+        - name: title
+          type: string
+          required: true
+        - name: description
+          type: text
+        - name: due_date
+          type: date
+        - name: status
+          type: enum
+          values: ["pending", "submitted", "approved", "rejected", "cancelled"]
+        - name: created_at
+          type: timestamp
+        - name: submitted_at
+          type: timestamp
+        - name: approved_at
+          type: timestamp
+          
+    - name: "Document"
+      description: "Opplastet dokument"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: document_request_id
+          type: uuid
+          foreign_key: DocumentRequest.id
+        - name: uploaded_by
+          type: uuid
+          description: "ClientUser.id som lastet opp"
+        - name: file_name
+          type: string
+        - name: file_path
+          type: string
+          description: "Path i Supabase Storage"
+        - name: file_size
+          type: integer
+        - name: mime_type
+          type: string
+        - name: uploaded_at
+          type: timestamp
+          
+    - name: "RequestTemplate"
+      description: "Mal for dokumentforespørsel"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: organization_id
+          type: uuid
+          foreign_key: Organization.id
+          nullable: true
+          description: "null = global mal"
+        - name: name
+          type: string
+          required: true
+        - name: description
+          type: text
+        - name: example_image_url
+          type: string
+        - name: default_days_until_due
+          type: integer
+          default: 7
+        - name: is_active
+          type: boolean
+          default: true
+          
+    - name: "Notification"
+      description: "E-postvarsler sendt"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: recipient_email
+          type: string
+        - name: type
+          type: enum
+          values: ["request_created", "reminder", "submitted", "approved", "rejected"]
+        - name: related_entity_id
+          type: uuid
+        - name: related_entity_type
+          type: string
+        - name: sent_at
+          type: timestamp
+        - name: status
+          type: enum
+          values: ["sent", "delivered", "bounced", "failed"]
+
+  relationships:
+    - "Organization 1:N User"
+    - "Organization 1:N Client"
+    - "Client 1:N ClientUser"
+    - "Client 1:N DocumentRequest"
+    - "DocumentRequest 1:N Document"
+    - "User 1:N DocumentRequest (created_by)"
+    - "Organization 1:N RequestTemplate"
+
+# ============================================================================
+# API DESIGN
+# ============================================================================
+
+api_design:
+  approach: "RESTful API via Next.js API routes + Server Actions"
+  
+  authentication:
+    method: "Supabase Auth (JWT)"
+    flows:
+      - name: "Regnskapsfører login"
+        method: "Email/password or Magic link"
+      - name: "Kunde login"
+        method: "Magic link (sendes ved invitasjon og pålogging)"
+        
+  authorization:
+    model: "Row Level Security (RLS) i Supabase"
+    policies:
+      - "Organization-brukere ser kun egen organizations data"
+      - "ClientUsers ser kun egen clients data"
+      - "Admin-rolle kan alt innenfor organization"
+      
+  key_endpoints:
+    # Regnskapsfører-endepunkt
+    - path: "/api/clients"
+      methods: ["GET", "POST"]
+      description: "Liste og opprette kunder"
+      auth: "User (accountant)"
+      
+    - path: "/api/clients/{id}"
+      methods: ["GET", "PUT", "DELETE"]
+      description: "Hente, oppdatere, slette kunde"
+      auth: "User (accountant)"
+      
+    - path: "/api/clients/{id}/requests"
+      methods: ["GET", "POST"]
+      description: "Dokumentforespørsler for kunde"
+      auth: "User (accountant)"
+      
+    - path: "/api/requests/{id}"
+      methods: ["GET", "PUT"]
+      description: "Hente og oppdatere forespørsel (godkjenne/avvise)"
+      auth: "User (accountant)"
+      
+    - path: "/api/templates"
+      methods: ["GET", "POST"]
+      description: "Forespørsmaler"
+      auth: "User (accountant)"
+      
+    # Kundeportal-endepunkt
+    - path: "/api/portal/tasks"
+      methods: ["GET"]
+      description: "Kundens ventende oppgaver"
+      auth: "ClientUser"
+      
+    - path: "/api/portal/tasks/{id}/submit"
+      methods: ["POST"]
+      description: "Laste opp dokument til oppgave"
+      auth: "ClientUser"
+      
+    # Webhook/bakgrunn
+    - path: "/api/webhooks/reminder"
+      methods: ["POST"]
+      description: "Trigger påminnelser (cron)"
+      auth: "Secret key"
+
+# ============================================================================
+# INTEGRATIONS
+# ============================================================================
+
+integrations:
+  mvp_integrations:
+    - name: "Supabase Auth"
+      purpose: "Brukerautentisering og sesjonshåndtering"
+      complexity: low
+      cost: "Inkludert i Supabase (gratis tier: 50k MAU)"
+      
+    - name: "Supabase Storage"
+      purpose: "Dokumentlagring"
+      complexity: low
+      cost: "Inkludert (1GB gratis, deretter $0.021/GB)"
+      
+    - name: "Resend"
+      purpose: "Transaksjonell e-post"
+      complexity: low
+      cost: "3000 e-post/mnd gratis, deretter $20/mnd"
+      alternative: "Supabase Edge Functions + SendGrid"
+      
+  post_mvp_integrations:
+    - name: "BankID/Signicat"
+      purpose: "Digital signering"
+      complexity: high
+      cost: "Oppsett + per-signatur (ca 15-30 kr)"
+      timeline: "Etter MVP, når signering blir prioritert"
+      notes: |
+        Krever avtale med Signicat eller Posten. Integrasjon via 
+        REST API. Må håndtere redirect-flyten og signatur-verifisering.
+        
+    - name: "Tripletex API"
+      purpose: "Synkronisere kundelister fra regnskapssystem"
+      complexity: medium
+      timeline: "2027, basert på kundeetterspørsel"
+      notes: "Tripletex har åpen API. Krever OAuth 2.0 oppsett."
+      
+    - name: "Fiken API"
+      purpose: "Alternativ regnskapssystem-integrasjon"
+      complexity: medium
+      timeline: "2027"
+      
+    - name: "OCR (Google Cloud Vision)"
+      purpose: "Tekstgjenkjenning for søkbar arkivering"
+      complexity: medium
+      cost: "First 1000 gratis, deretter $1.50 per 1000 docs"
+      timeline: "Post-MVP, når arkiv-søk blir prioritert"
+
+# ============================================================================
+# SECURITY
+# ============================================================================
+
+security:
+  authentication:
+    - "Supabase Auth håndterer passord-hashing (bcrypt)"
+    - "JWT tokens for sesjonshåndtering"
+    - "Magic links for kundeportal (enklere, sikkert nok for MVP)"
+    
+  authorization:
+    - "Row Level Security i Supabase for all DB-tilgang"
+    - "Bruker kan kun se data fra egen organization/client"
+    - "API-endepunkt verifiserer rolle før operasjon"
+    
+  data_protection:
+    - "All trafikk over HTTPS (Vercel enforces)"
+    - "Database kryptert at rest (Supabase)"
+    - "Fil-storage kryptert (Supabase Storage)"
+    - "Ingen sensitiv data i logger"
+    
+  compliance:
+    gdpr:
+      - "Databehandlingsavtale med kunder"
+      - "Kunder kan eksportere sine data"
+      - "Sletting av kunde sletter relatert data"
+      - "Data lagres i EU (Supabase region: eu-central-1)"
+      
+    regnskapslovgivning:
+      - "Dokumenter lagres i 5+ år (konfigurerbar retensjon)"
+      - "Signerte dokumenter har timestamp og sertifikat"
+      - "Audit log av alle operasjoner (post-MVP)"
+
+# ============================================================================
+# INFRASTRUCTURE
+# ============================================================================
+
+infrastructure:
+  hosting:
+    provider: "Vercel"
+    plan: "Pro ($20/mnd per medlem)"
+    features:
+      - "Automatisk CI/CD fra GitHub"
+      - "Edge network for rask respons"
+      - "Preview deployments per PR"
+      - "Serverless functions"
+      
+  database:
+    provider: "Supabase"
+    plan: "Pro ($25/mnd) - eller Free tier for MVP"
+    specs:
+      compute: "2 vCPU, 1GB RAM (kan skaleres)"
+      storage: "8GB database + 100GB storage"
+      connections: "60 concurrent"
+      
+  email:
+    provider: "Resend"
+    plan: "Free (3000/mnd) → Pro ($20/mnd)"
+    
+  domain:
+    registrar: "Domeneshop eller tilsvarende"
+    cost: "~200 kr/år"
+    ssl: "Automatisk via Vercel"
+    
+  monitoring:
+    - name: "Vercel Analytics"
+      purpose: "Trafikk og performance"
+      cost: "Inkludert"
+    - name: "Supabase Dashboard"
+      purpose: "Database-metrics"
+      cost: "Inkludert"
+    - name: "Sentry (valgfri)"
+      purpose: "Error tracking"
+      cost: "Free tier (5000 events/mnd)"
+
+  estimated_monthly_cost:
+    mvp_free_tier: 
+      total: "0-50 kr"
+      breakdown:
+        - "Vercel: 0 (Hobby tier)"
+        - "Supabase: 0 (Free tier)"
+        - "Resend: 0 (3000 emails)"
+        - "Domene: ~17 kr/mnd"
+        
+    mvp_paid:
+      total: "~500-700 kr"
+      breakdown:
+        - "Vercel Pro: 200 kr"
+        - "Supabase Pro: 250 kr"
+        - "Resend Pro: 200 kr"
+        - "Domene: 17 kr"
+        
+    growth_stage:
+      total: "~2000-5000 kr"
+      notes: "Skalerer med bruk, hovedsakelig Storage og Compute"
+
+# ============================================================================
+# DEVELOPMENT WORKFLOW
+# ============================================================================
+
+development:
+  repository:
+    url: "https://github.com/PedroFasting/regnskapsbruker"
+    structure:
+      - "/app - Next.js App Router pages"
+      - "/components - React komponenter"
+      - "/lib - Utilities, Supabase client"
+      - "/types - TypeScript typer"
+      - "/supabase - Migrations og seed-data"
+      
+  branching:
+    strategy: "GitHub Flow"
+    branches:
+      - main: "Produksjon (auto-deploy)"
+      - feature/*: "Feature-utvikling"
+      - fix/*: "Bug fixes"
+      
+  ci_cd:
+    - "Push til main → Automatisk deploy til Vercel"
+    - "PR → Preview deployment + type-checking"
+    - "Database migrations kjøres manuelt (Supabase CLI)"
+    
+  local_development:
+    requirements:
+      - "Node.js 20+"
+      - "pnpm (package manager)"
+      - "Supabase CLI (for local DB)"
+    commands:
+      - "pnpm install - Installer dependencies"
+      - "supabase start - Start lokal DB"
+      - "pnpm dev - Start dev server"
+      - "pnpm build - Build for produksjon"
+      
+  testing:
+    strategy: "Minimal for MVP, utvides etter behov"
+    types:
+      - unit: "Vitest for kritiske utils"
+      - e2e: "Playwright for hovedflyter (post-MVP)"
+      - manual: "Primær testmetode i MVP"
+
+# ============================================================================
+# TECH DEBT & FUTURE CONSIDERATIONS
+# ============================================================================
+
+tech_debt:
+  accepted_for_mvp:
+    - debt: "Ingen automatisert testing"
+      reason: "Hastighet viktigere enn testdekning i MVP"
+      plan: "Legge til E2E-tester før skalering"
+      
+    - debt: "Ingen caching/Redis"
+      reason: "Supabase er rask nok for MVP-skalering"
+      plan: "Vurder Upstash Redis hvis performance-issues"
+      
+    - debt: "Hardkodet e-postmaler"
+      reason: "Enklere å justere i kode enn bygg template-system"
+      plan: "Flytt til CMS/template-engine når vi har mange maler"
+      
+    - debt: "Ingen audit log"
+      reason: "Ikke kritisk for MVP"
+      plan: "Legge til før enterprise-kunder"
+      
+  scalability_notes: |
+    Arkitekturen håndterer 1000+ samtidige brukere uten endringer.
+    Flaskehalser ved skalering:
+    - Supabase connections (løses med pgBouncer/pooling)
+    - Storage båndbredde (kan flytte til S3 om nødvendig)
+    - Edge functions cold start (akseptabelt for MVP)
+    
+    Splitting av tjenester (microservices) er IKKE nødvendig før
+    vi eventuelt har 10+ utviklere og separate team.
+
+# ============================================================================
+# DECISION LOG
+# ============================================================================
+
+decision_log:
+  - decision: "Next.js over separert frontend/backend"
+    date: "2026-02-10"
+    rationale: |
+      Enklere stack for én utvikler. Server Actions gir fullstack-
+      opplevelse uten å vedlikeholde separat API. Kan flytte til 
+      separat backend senere om nødvendig.
+      
+  - decision: "Supabase over egenhostet PostgreSQL"
+    date: "2026-02-10"
+    rationale: |
+      Supabase gir auth, storage, realtime og hosting ut av boksen.
+      Sparer betydelig tid på oppsett. Kostnad akseptabel for MVP.
+      Lock-in er reell, men migrering til ren PostgreSQL mulig.
+      
+  - decision: "Vercel over AWS/GCP"
+    date: "2026-02-10"
+    rationale: |
+      Optimal for Next.js. Zero-config deployment. Prissammenlignbart
+      for MVP-skalering. Enklere enn Kubernetes/Terraform.
+      
+  - decision: "Magic links for kundeportal login"
+    date: "2026-02-10"
+    rationale: |
+      Kunder har ikke passord å huske, reduserer friksjon. Sikkert
+      nok for dokumentopplasting. BankID reservert for signering.
