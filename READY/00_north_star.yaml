@@ -1,292 +1,340 @@
-# EPF v1.13.0 - North Star Template
-# NORTH STAR: Organizational Strategic Foundation
-# This document contains the enduring strategic context for the entire product organization.
-# These elements are relatively stable and inform all EPF cycles, but should be reviewed annually
-# or when fundamental strategic shifts occur.
+# EPF v1.13.0 - North Star: Regnskapsbruker
+# Kundeportal og regnskapsførerarbeidsflate for effektiv samhandling
 #
-# STABILITY: This document changes rarely (annually or during major pivots)
-# SCOPE: Organization-wide, not cycle-specific
-# INFORMS: All READY phase artifacts (analyses, opportunity, strategy, roadmap)
-#
-# Related Resources:
-# - Schema: ../../schemas/north_star_schema.json
-# - Guide: ../../docs/guides/NORTH_STAR_GUIDE.md
+# STABILITY: Årlig gjennomgang
+# SCOPE: Regnskapsbruker-produktet
+# INFORMS: Alle READY-fase artefakter
 
 north_star:
-  organization: "Your Organization Name"
-  last_reviewed: "YYYY-MM-DD"
-  next_review: "YYYY-MM-DD" # Recommended annual review
+  organization: "ECIT / Regnskapsbruker"
+  last_reviewed: "2026-02-10"
+  next_review: "2027-02-10"
   version: "1.0"
   
   # ============================================================================
-  # 1. PURPOSE - Why We Exist
+  # 1. PURPOSE - Hvorfor vi eksisterer
   # ============================================================================
-  # The fundamental reason for being - the problem we exist to solve in the world
   
   purpose:
     statement: |
-      A clear, inspiring statement of why your organization exists.
-      Not what you do, but WHY you do it.
-      Should be timeless and aspirational.
-      
-      Example: "We exist to democratize access to world-class education"
-      Example: "We exist to eliminate preventable suffering in healthcare"
-      Example: "We exist to help teams do their best work without burnout"
+      Vi eksisterer for å eliminere friksjon mellom regnskapsførere og deres kunder,
+      slik at begge parter kan fokusere på verdiskaping fremfor administrativt arbeid.
     
     problem_we_solve: |
-      The fundamental human or organizational problem we're addressing.
-      This should be enduring - likely still relevant in 10+ years.
+      Regnskapsførere bruker uforholdsmessig mye tid på å jage dokumentasjon, 
+      purre på godkjenninger, og koordinere med kunder via e-post og telefon.
+      Kunder mangler innsikt i hva som skjer med deres regnskap og hva som 
+      forventes av dem. Resultatet er ineffektivitet, forsinkelser og frustrasjon
+      på begge sider.
     
-    who_we_serve: "The broadest definition of who benefits from our existence"
+    who_we_serve: "Regnskapsførere og deres kunder på tvers av segmenter (SMB, AS, ENK, NUF)"
     
     impact_we_seek: |
-      The ultimate change we want to create in the world.
-      If we succeed wildly, what's different?
+      Regnskapsførere kan betjene flere kunder med høyere kvalitet.
+      Kunder opplever transparens og kontroll over sin økonomiske situasjon.
+      Samhandling skjer sømløst og dokumentert i ett system.
   
   # ============================================================================
-  # 2. VISION - Where We Imagine Being in the Future
+  # 2. VISION - Hvor vi ser for oss å være
   # ============================================================================
-  # The picture of success - what the world looks like when we've fulfilled our purpose
   
   vision:
     vision_statement: |
-      A vivid, inspiring picture of the future (5-10 years).
-      Should be ambitious but believable.
-      Should paint a picture anyone can understand.
-      
-      Example: "A world where every child has access to personalized learning"
-      Example: "Every team works with clarity, alignment, and joy"
-      Example: "Healthcare decisions are always informed by the best evidence"
+      Regnskapsbruker er den foretrukne samhandlingsplattformen mellom regnskapsførere 
+      og deres kunder i Norden. Hver kunde har sin egen portal med full oversikt,
+      mens regnskapsføreren har et effektivt arbeidsverktøy som automatiserer
+      oppfølging og dokumentinnhenting på tvers av hele kundeporteføljen.
     
-    timeframe: "5-10 years"
+    timeframe: "3-5 år"
     
     success_looks_like:
-      - "Observable indicator 1: What we see in the world"
-      - "Observable indicator 2: How people's lives are different"
-      - "Observable indicator 3: What our market/industry looks like"
-      - "Observable indicator 4: What our organization looks like"
+      - "Regnskapsførere bruker 50% mindre tid på administrativ kundeoppfølging"
+      - "Kunder logger inn ukentlig for å se status og levere dokumentasjon"
+      - "90%+ av dokumenter og godkjenninger håndteres gjennom plattformen"
+      - "Integrasjon med regnskapssystem, signering og lønn er sømløs"
+      - "Kundetilfredshet øker fordi kunder føler seg informert og involvert"
     
     not_the_vision:
-      - "Clarification 1: What we're NOT trying to become"
-      - "Clarification 2: Boundaries on our ambition"
+      - "Vi erstatter IKKE selve regnskapssystemet"
+      - "Vi gjør IKKE regnskapsarbeid automatisk (vi støtter samhandlingen)"
+      - "Vi er IKKE et generelt prosjektstyringsverktøy"
   
   # ============================================================================
-  # 3. MISSION - What We Do to Deliver Value
+  # 3. MISSION - Hva vi gjør for å levere verdi
   # ============================================================================
-  # The concrete activities and offerings that fulfill our purpose and move us toward vision
   
   mission:
     mission_statement: |
-      A clear statement of WHAT we do and FOR WHOM.
-      More concrete than purpose, more stable than individual products.
-      
-      Example: "We build AI-powered learning platforms that adapt to each student's needs"
-      Example: "We create workflow tools that eliminate coordination overhead for distributed teams"
-      Example: "We provide clinical decision support that synthesizes the latest evidence"
+      Vi bygger en tosidig plattform: en kundeportal der regnskapskunder kan
+      se status, levere dokumenter og gi godkjenninger - og en arbeidsflate 
+      for regnskapsførere som gir oversikt over alle kunder, automatiserer 
+      oppfølging og integrerer med kjernesystemene.
     
     what_we_do:
-      - "Core activity 1: Primary thing we do"
-      - "Core activity 2: Another core activity"
-      - "Core activity 3: Supporting activity"
+      - "Kundeportal: Kunder logger inn og ser oppdrag, leveranser, og hva som ventes av dem"
+      - "Regnskapsførervisning: Dashboard over alle kunder med status, oppgaver og varsler"
+      - "Dokumenthåndtering: Strukturert mottak og arkivering av bilag og underlag"
+      - "Godkjenningsflyt: Digitale godkjenninger som erstatter e-post og signatur-jakt"
+      - "Integrasjoner: Kobling mot regnskapssystem, signering, lønn og styreportal"
     
     how_we_deliver:
       approach: |
-        Our distinctive approach or methodology.
-        What makes our way of delivering the mission unique?
+        Segmentbasert tilnærming der ulike kundetyper (AS, ENK, NUF, osv.) 
+        får tilpassede visninger og arbeidsflyter. Enkelt brukergrensesnitt
+        som minimerer opplæringsbehov for både regnskapsfører og kunde.
       
       key_capabilities:
-        - "Capability 1: Core competency we build"
-        - "Capability 2: Another essential capability"
+        - "Segmentspesifikke maler for informasjonsbehov og oppgaver"
+        - "Automatiske påminnelser og purringer til kunder"
+        - "API-integrasjoner mot eksisterende systemer"
+        - "Rollebasert tilgang (regnskapsfører, kunde, administrator)"
     
     who_we_serve_specifically: |
-      More specific than purpose - which segments, roles, or personas?
-      Can evolve as we expand, but should be clear now.
+      Primært: Regnskapsførere som betjener SMB-kunder (1-50 ansatte)
+      Sekundært: Kundene selv - daglige ledere, økonomiansvarlige i SMB
+      Segmenter: AS (aksjeselskap), ENK (enkeltpersonforetak), NUF, holdingselskap
     
     boundaries:
       we_dont_do:
-        - "Activity 1 we explicitly don't do"
-        - "Activity 2 that's out of scope"
+        - "Regnskapsføring - vi er samhandlingsverktøy, ikke regnskapssystem"
+        - "Bankintegrasjon direkte - dette går via regnskapssystemet"
+        - "Fakturering til sluttkunder - dette håndteres i andre systemer"
       
-      why_not: "Rationale for these boundaries (focus, competency, strategy)"
+      why_not: "Fokus på samhandling og kundeopplevelse - ikke duplisere eksisterende systemer"
   
   # ============================================================================
-  # 4. VALUES - How We Behave and Conduct Ourselves
+  # 4. VALUES - Hvordan vi oppfører oss
   # ============================================================================
-  # Normative rules that guide decisions, behaviors, and culture
   
   values:
-    - value: "Value Name 1"
+    - value: "Enkelhet først"
       definition: |
-        What this value means in practice.
-        Should be specific enough to guide decisions.
+        Brukergrensesnittet skal være intuitivt for både regnskapsførere og kunder
+        uten behov for opplæring. Kompleksitet håndteres i bakgrunnen.
       
       behaviors_we_expect:
-        - "Observable behavior 1 that demonstrates this value"
-        - "Observable behavior 2"
+        - "Vi spør 'kan dette gjøres enklere?' før hver funksjon lanseres"
+        - "Vi tester med reelle brukere og forenkler basert på feedback"
       
       behaviors_we_reject:
-        - "Anti-pattern 1 that violates this value"
-        - "Anti-pattern 2"
+        - "Funksjoner som krever manual eller opplæring for å forstå"
+        - "'Power user'-funksjoner som forvirrer vanlige brukere"
       
       example_decision: |
-        A concrete example of how this value influenced a real decision.
-        "When faced with [situation], we chose [action] because [value]."
+        Vi valgte færre felt i dokumentopplasting fremfor komplett metadata,
+        fordi brukervennlighet trumfer datakvalitet ved første versjon.
     
-    - value: "Value Name 2"
+    - value: "Segmentbevissthet"
       definition: |
-        What this value means.
+        Ulike kundesegmenter har ulike behov. En ENK-kunde trenger ikke samme 
+        visning som et AS med 20 ansatte. Vi tilpasser opplevelsen.
       
       behaviors_we_expect:
-        - "Expected behavior 1"
-        - "Expected behavior 2"
+        - "Vi definerer tydelige segmenter og deres unike behov"
+        - "Vi bygger fleksibilitet så regnskapsfører kan tilpasse per kunde"
       
       behaviors_we_reject:
-        - "Anti-pattern 1"
+        - "One-size-fits-all løsninger som ignorerer segmentforskjeller"
       
       example_decision: |
-        Concrete example of this value in action.
+        Lønnsinformasjon vises kun for segmenter med ansatte (AS, NUF med ansatte).
     
-    - value: "Value Name 3"
-      definition: "What this value means."
+    - value: "Integrasjon over duplisering"
+      definition: "Vi integrerer med eksisterende systemer fremfor å bygge parallelle løsninger"
       behaviors_we_expect:
-        - "Expected behavior"
+        - "Vi bruker API fra regnskapssystem, signering, lønn"
       behaviors_we_reject:
-        - "Anti-pattern"
-      example_decision: "Example"
-    
-    # Typical values: Customer obsession, Bias for action, Ownership, Transparency, 
-    # Excellence, Simplicity, Speed, Learning, Collaboration, Impact, etc.
+        - "Å bygge egne versjoner av funksjoner som finnes i andre systemer"
+      example_decision: "Signering skjer via ekstern signeringstjeneste, ikke egen løsning"
   
   value_conflicts:
-    - tension: "When two values conflict (e.g., Speed vs. Quality)"
-      resolution_principle: "How we resolve this tension"
+    - tension: "Enkelhet vs. Segmentbevissthet (flere varianter = mer kompleksitet)"
+      resolution_principle: "Start enkelt med felles kjerne, legg til segmenttilpasning gradvis"
   
   # ============================================================================
-  # 5. CORE BELIEFS - First Principles That Underpin Our Reasoning
+  # 5. CORE BELIEFS - Grunnleggende antakelser
   # ============================================================================
-  # The fundamental assumptions and beliefs that guide our deductive reasoning
-  # These are the "axioms" from which we derive strategy and decisions
   
   core_beliefs:
     about_our_market:
-      - belief: "First principle about market dynamics"
-        implication: "Therefore, we must/should..."
-        evidence: "What supports this belief"
+      - belief: "Regnskapsbransjen digitaliseres, men kundeinteraksjon henger etter"
+        implication: "Det er et gap mellom moderne regnskapssystemer og gammeldags kundeoppfølging"
+        evidence: "De fleste regnskapsførere bruker fortsatt e-post og telefon for kundekoordinering"
       
-      - belief: "Second principle about market"
-        implication: "Therefore..."
-        evidence: "Supporting evidence"
+      - belief: "Kunder forventer digital selvbetjening og transparens"
+        implication: "Portal-tilnærming vil bli forventet standard, ikke differensiator"
+        evidence: "Bank, forsikring, og andre bransjer har satt forventningen om kundeportaler"
     
     about_our_users:
-      - belief: "Fundamental belief about user behavior or needs"
-        implication: "Therefore, we design/build/sell this way..."
-        evidence: "What validates this"
+      - belief: "Regnskapsførere er overbelastet med administrativt arbeid"
+        implication: "Verktøy som reduserer manuell oppfølging har høy verdi"
+        evidence: "Gjennomsnittlig regnskapsfører bruker 30%+ av tid på kundekoordinering"
       
-      - belief: "Another user-centric belief"
-        implication: "Therefore..."
-        evidence: "Evidence"
+      - belief: "Kunder vet ofte ikke hva som forventes av dem"
+        implication: "Proaktiv kommunikasjon og tydelige oppgavelister er verdifullt"
+        evidence: "Forsinkelser skyldes ofte manglende klarhet, ikke vilje"
     
     about_our_approach:
-      - belief: "Core belief about how to solve problems in our domain"
-        implication: "Therefore, our products/features work this way..."
-        evidence: "What proves this approach works"
+      - belief: "Integrasjon med eksisterende systemer er avgjørende for adopsjon"
+        implication: "Vi må prioritere API-integrasjoner fra dag én"
+        evidence: "Regnskapsførere vil ikke ha enda et isolert system"
       
-      - belief: "Another methodological belief"
-        implication: "Therefore..."
-        evidence: "Evidence"
+      - belief: "Segmentspesifikke behov krever fleksibel arkitektur"
+        implication: "Plattformen må støtte ulike arbeidsflyter per segment"
+        evidence: "AS vs ENK har fundamentalt ulike krav til rapportering og godkjenning"
     
     about_value_creation:
-      - belief: "Fundamental belief about how value is created/captured"
-        implication: "Therefore, our business model..."
-        evidence: "What supports this"
+      - belief: "Verdi skapes ved å spare tid for regnskapsfører, ikke bare for kunde"
+        implication: "Fokuser på regnskapsførers effektivitet som primær KPI"
+        evidence: "Regnskapsfører er betalende kunde og beslutningsprått"
     
     about_competition:
-      - belief: "Core belief about competitive dynamics"
-        implication: "Therefore, we compete by..."
-        evidence: "What proves this"
+      - belief: "Konkurransen kommer fra interne løsninger og status quo"
+        implication: "Vi må gjøre det enkelt å komme i gang, ikke bare bedre å ha"
+        evidence: "De fleste regnskapsbyråer har hjemmesnekrede løsninger"
     
     belief_challenges:
-      - belief: "Which core belief"
-        counter_evidence: "Evidence that might challenge this belief"
-        monitoring: "How we track if this belief still holds"
+      - belief: "Kunder vil faktisk logge inn og bruke en portal"
+        counter_evidence: "Mange kundeportaler har lav adopsjonsrate"
+        monitoring: "Aktive brukere per uke, gjentatte innlogginger"
   
   # ============================================================================
-  # CONSISTENCY & ALIGNMENT
+  # KONSISTENS & ALIGNMENT
   # ============================================================================
   
   alignment_checks:
     purpose_vision_alignment: |
-      How does our vision fulfill our purpose?
-      Are they mutually reinforcing?
+      Visjonen (foretrukket samhandlingsplattform) realiserer formålet 
+      (eliminere friksjon i regnskapsfører-kunde-relasjonen).
     
     mission_purpose_alignment: |
-      Does our mission (what we do) serve our purpose (why we exist)?
-      Is there a clear line?
+      Tverrplattform (kundeportal + regnskapsførervisning) adresserer
+      direkte problemet med koordinering og manglende transparens.
     
     values_mission_alignment: |
-      Do our values support how we execute our mission?
-      Any conflicts between values and what we do?
+      Enkelhet og segmentbevissthet støtter misjonens mål om tilpassede
+      løsninger som ikke krever opplæring.
     
     beliefs_inform_strategy: |
-      How do our core beliefs shape our strategic choices?
-      Are there beliefs that should influence current strategy work?
+      Antakelsen om at integrasjon er kritisk betyr at vi må prioritere
+      API-arbeid tidlig. Segmentbehov former produktarkitekturen.
   
   # ============================================================================
-  # REVIEW & EVOLUTION
+  # GJENNOMGANG & EVOLUSJON
   # ============================================================================
   
   evolution_history:
-    - date: "YYYY-MM-DD"
-      what_changed: "Which element(s) changed"
-      why: "Reason for change (market shift, learning, pivot, etc.)"
-      impact: "How this affects ongoing cycles"
+    - date: "2026-02-10"
+      what_changed: "Initial versjon opprettet"
+      why: "Nytt produktinitiativ for regnskapsfører-kundesamhandling"
+      impact: "Grunnlag for første READY-syklus"
   
   next_review_triggers:
-    scheduled: "Annual review date"
+    scheduled: "2027-02-10"
     event_based:
-      - "Major market disruption"
-      - "Significant competitive shift"
-      - "Fundamental technology change"
-      - "Business model pivot"
-      - "Leadership change"
+      - "Signifikant endring i integrasjonsstrategi"
+      - "Ny segment-prioritering"
+      - "Strategisk pivot basert på markedsfeedback"
+      - "Oppkjøp eller partnerskap som påvirker retningen"
 
 # ============================================================================
-# HOW THIS INFORMS EPF CYCLES
+# HVORDAN DETTE INFORMERER EPF-SYKLUSEN
 # ============================================================================
 
 informs_ready_phase:
   insight_analyses:
-    - "Trend analysis should align with our beliefs about market dynamics"
-    - "User/problem analysis should validate beliefs about users"
-    - "SWOT should reflect capabilities needed for our mission"
+    - "Analyser segmentbehov (AS, ENK, NUF) for å validere antakelser"
+    - "Kartlegg nåværende regnskapsfører-kunde-interaksjoner"
+    - "Undersøk konkurrererende løsninger og hjemmesnekrete alternativer"
   
   opportunity:
-    - "Opportunities should advance our vision"
-    - "Opportunities should align with our mission scope"
+    - "Fokuser på muligheter som reduserer koordineringstid"
+    - "Prioriter muligheter med integrasjonspotensial"
   
   strategy_foundations:
-    - "Product vision should be a stepping stone toward organizational vision"
-    - "Value proposition should reflect our beliefs about value creation"
-    - "Strategic sequencing should align with our approach beliefs"
+    - "Produktvisjon skal være stepping-stone mot samhandlingsplattform"
+    - "Verdiforslag fokuserer på tidsbesparelse for regnskapsfører"
   
   strategy_formula:
-    - "Positioning should be consistent with our mission"
-    - "Business model should reflect value creation beliefs"
-    - "Competitive moat should leverage our core beliefs about competition"
+    - "Posisjonering: 'Den enkle måten å samarbeide med regnskapskunder'"
+    - "Forretningsmodell: Per-kunde-lisens eller inkludert i regnskapssystem"
   
   roadmap:
-    - "OKRs should advance our mission"
-    - "Work should be conducted according to our values"
-    - "Assumptions should be testable against our core beliefs"
+    - "MVP: Kundeportal + dokumentopplasting + godkjenningsflyt"
+    - "Fase 2: Integrasjoner (regnskap, signering, lønn)"
+    - "Fase 3: Segmenttilpasning og automatisering"
 
 # ============================================================================
-# USAGE NOTES
+# BRUKERROLLER OG SEGMENTER
+# ============================================================================
+
+user_roles:
+  regnskapsforer:
+    description: "Regnskapsfører som betjener flere kunder"
+    key_needs:
+      - "Oversikt over alle kunder og deres status"
+      - "Varsler om manglende dokumenter eller godkjenninger"
+      - "Enkel måte å sende forespørsler til kunder"
+      - "Se historikk på kundeinteraksjoner"
+    pain_points:
+      - "Bruker for mye tid på å jage dokumenter via e-post"
+      - "Mangler oversikt - hvem venter på hva?"
+      - "Vanskelig å onboarde nye kunder effektivt"
+  
+  kunde:
+    description: "Regnskapskundens kontaktperson (daglig leder, økonomiansvarlig)"
+    key_needs:
+      - "Se hva regnskapsfører jobber med"
+      - "Forstå hva som forventes av meg"
+      - "Levere dokumenter trygt og enkelt"
+      - "Godkjenne dokumenter digitalt"
+    pain_points:
+      - "Vet ikke hva regnskapet koster eller inkluderer"
+      - "Usikker på om alt er i orden"
+      - "E-post forsvinner i mengden"
+
+customer_segments:
+  as_small:
+    name: "AS (små, 1-5 ansatte)"
+    characteristics: "Enkel struktur, daglig leder gjør alt"
+    key_interactions:
+      - "Månedlig bilagslevering"
+      - "Årsoppgjør og generalforsamling"
+      - "Mva-rapportering (termin)"
+      - "A-melding (månedlig)"
+    
+  as_medium:
+    name: "AS (mellomstore, 5-50 ansatte)"
+    characteristics: "Økonomiansvarlig, mer kompleks struktur"
+    key_interactions:
+      - "Løpende bilagslevering"
+      - "Lønnskjøringer"
+      - "Styremøteunderlag"
+      - "Budsjettarbeid"
+      - "Perioderapportering"
+  
+  enk:
+    name: "Enkeltpersonforetak"
+    characteristics: "Ofte deltid/bi-inntekt, enklere krav"
+    key_interactions:
+      - "Årlig bilagsinnlevering"
+      - "Næringsoppgave"
+      - "Skattemelding"
+  
+  nuf:
+    name: "NUF (Norskregistrert utenlandsk foretak)"
+    characteristics: "Særskilte krav, ofte utenlandsk morselskap"
+    key_interactions:
+      - "Koordinering med utenlandsk regnskap"
+      - "Norske mva-krav"
+      - "Særrapportering"
+
+# ============================================================================
+# BRUKSVEILEDNING
 # ============================================================================
 
 usage_guidance: |
-  1. REVIEW this document at the start of each major strategic planning cycle
-  2. REFERENCE it when making strategic trade-offs or decisions
-  3. UPDATE it only when fundamental organizational direction changes
-  4. VALIDATE that all READY phase artifacts align with this North Star
-  5. USE values and beliefs to resolve strategic tensions
-  6. COMMUNICATE this broadly - it should be known across the organization
+  1. GJENNOMGÅ dette dokumentet ved start av hver strategisk planleggingssyklus
+  2. BRUK det som referanse ved prioriteringsdiskusjoner
+  3. VALIDER at alle READY-fase artefakter er i tråd med North Star
+  4. OPPDATER kun ved fundamentale retningsendringer
