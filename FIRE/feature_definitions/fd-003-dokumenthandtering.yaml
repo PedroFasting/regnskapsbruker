@@ -1,0 +1,451 @@
+# Feature Definition: Dokumenthåndtering
+# Dokumentforespørsel, mottak og arkivering
+
+id: fd-003
+name: "Dokumenthåndtering"
+slug: "dokumenthandtering"
+status: draft
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Dokumentflyt mellom regnskapsfører og kunde er kaotisk. E-poster 
+    med vedlegg, SMS-er med bilder, og fysisk post blandes sammen.
+    Regnskapsfører må manuelt sortere, navngi og arkivere alt som 
+    kommer inn. Kunden vet ikke om dokumentet er mottatt, riktig 
+    format, eller om noe mangler. Resultatet er dobbeltarbeid og
+    forsinkelser.
+
+  market_context: |
+    Dokumenthåndtering er kjernen i regnskapsarbeid, men verktøyene
+    er fragmenterte. Regnskapssystemene fokuserer på bilagsføring,
+    ikke på innsamling. Dedikerte dokumentsystemer finnes, men de er
+    sjelden integrert i kundeportaler. Muligheten ligger i å koble
+    dokumentinnsamling direkte til oppgaveflyt.
+
+  contributes_to:
+    - Regnskapsfører.Dokumentmottak.Effektivitet
+    - Kunde.Levering.Enkelhet
+    - Compliance.Arkivering.Sporbarhet
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Dokumenter levert riktig første gang"
+      target: "85%+ av dokumenter i riktig format/type"
+      measurement: "Andel dokumenter uten returer eller oppfølging"
+    - metric: "Tid fra forespørsel til levering"
+      target: "Median < 48 timer"
+      measurement: "Tid fra oppgave opprettet til fullført"
+    - metric: "Manuell sorteringstid"
+      target: "80% reduksjon vs baseline"
+      measurement: "Tid regnskapsfører bruker på dokumentsortering"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når regnskapsfører trenger et dokument fra kunde, vil de opprette
+    en forespørsel som forklarer hva som trengs, slik at kunden leverer
+    riktig dokument på første forsøk og det arkiveres automatisk.
+
+  solution_approach: |
+    Strukturerte dokumentforespørsler med maler for vanlige typer
+    (bilag, kontrakter, fullmakter). Kunden ser tydelig hva som trengs
+    og kan laste opp direkte. Automatisk validering (filtype, størrelse),
+    kategorisering, og arkivering med metadata. OCR for søkbarhet.
+
+  capabilities:
+    - id: cap-001
+      name: "Dokumentforespørsel"
+      description: |
+        Regnskapsfører oppretter forespørsel med: type dokument, 
+        beskrivelse, frist, og eventuell mal. Kan velge fra bibliotek
+        av vanlige forespørsler eller lage ny. Kunden ser forespørselen
+        som en oppgave i sin portal.
+
+    - id: cap-002
+      name: "Dokumentmottak"
+      description: |
+        Når kunden laster opp, valideres filtype og størrelse. Dokumentet
+        knyttes automatisk til forespørselen. Regnskapsfører varsles.
+        Hvis kunden sender via annen kanal (e-post), kan regnskapsfører
+        manuelt koble dokumentet til riktig forespørsel.
+
+    - id: cap-003
+      name: "Dokumentgjennomgang"
+      description: |
+        Regnskapsfører kan åpne dokumentet, sjekke at det er riktig,
+        og godkjenne eller be om nytt. Hvis noe mangler eller er feil,
+        sendes "retur" til kunden med forklaring. Kunden får ny oppgave.
+
+    - id: cap-004
+      name: "Automatisk kategorisering"
+      description: |
+        Dokumenter kategoriseres basert på forespørselstype. Metadata
+        legges til: dato mottatt, kilde (portal/e-post), filnavn, 
+        tilknyttet periode (måned/år). Forberedelse for arkivering.
+
+    - id: cap-005
+      name: "OCR og søk"
+      description: |
+        Opplastede dokumenter kjøres gjennom OCR (tekstgjenkjenning).
+        Innholdet blir søkbart: regnskapsfører kan søke "faktura 12345"
+        og finne dokumentet selv om navnet er "IMG_20250315.jpg".
+
+    - id: cap-006
+      name: "Dokumentarkiv"
+      description: |
+        Alle dokumenter arkiveres per kunde med full historikk. Sortert
+        på periode, type, og status (godkjent/venter/returnert). 
+        Eksportmulighet for revisjon eller kundeutlevering.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Opprett forespørsel"
+    description: |
+      Skjerm der regnskapsfører oppretter ny dokumentforespørsel.
+      Velger kunde, type dokument (fra mal eller fritekst), beskriver
+      hva som trengs, og setter frist.
+    ui_location: "Regnskapsfører Dashboard → Kunde → Ny forespørsel"
+    access_control:
+      - "Kun regnskapsfører med tilgang til kunden"
+    key_interactions:
+      - "Velg dokumenttype fra mal eller skriv egen"
+      - "Sett frist (standard: 7 dager)"
+      - "Legg til spesifikke instruksjoner"
+      - "Send forespørsel"
+    data_displayed:
+      - "Mal-bibliotek for vanlige typer"
+      - "Kundens kontaktinfo"
+      - "Eventuelle tidligere forespørsler av samme type"
+
+  - id: ctx-002
+    name: "Innkommende dokumenter"
+    description: |
+      Liste over nylig mottatte dokumenter som venter på gjennomgang.
+      Viser dokumentnavn, kunde, forespørselstype, tid mottatt.
+    ui_location: "Regnskapsfører Dashboard → Innkommende"
+    access_control:
+      - "Alle dokumenter fra regnskapsførers kunder"
+    key_interactions:
+      - "Klikk for å åpne dokument"
+      - "Godkjenn eller returner"
+      - "Koble manuelt til forespørsel (for e-post-vedlegg)"
+    data_displayed:
+      - "Dokumentnavn og type"
+      - "Kunde-tilhørighet"
+      - "Status: ny/gjennomgått/returnert"
+      - "Lenke til forespørsel"
+
+  - id: ctx-003
+    name: "Dokumentvisning"
+    description: |
+      Fullskjerm visning av enkeltdokument med handlinger.
+      Forhåndsvisning av PDF/bilde, OCR-tekst, metadata.
+    ui_location: "Innkommende → Velg dokument"
+    access_control:
+      - "Regnskapsfører og kunde som eier dokumentet"
+    key_interactions:
+      - "Zoom/scroll i dokument"
+      - "Godkjenn dokument"
+      - "Returner med kommentar"
+      - "Last ned original"
+    data_displayed:
+      - "Dokumentinnhold (visning)"
+      - "OCR-tekst (søkbar)"
+      - "Metadata: mottatt, kilde, periode"
+      - "Forespørselsdetaljer"
+
+  - id: ctx-004
+    name: "Kundens opplastingsside"
+    description: |
+      Side i kundeportalen der kunde ser dokumentforespørsel og kan
+      laste opp. Forklarer hva som trengs, viser eksempel hvis mal
+      har det.
+    ui_location: "Kundeportal → Mine oppgaver → [Dokumentforespørsel]"
+    access_control:
+      - "Kun kunden som mottok forespørselen"
+    key_interactions:
+      - "Les instruksjoner"
+      - "Dra fil eller ta bilde"
+      - "Se forhåndsvisning"
+      - "Send dokument"
+    data_displayed:
+      - "Hva det bes om"
+      - "Frist"
+      - "Eksempel (hvis tilgjengelig)"
+      - "Tillatte filtyper"
+
+  - id: ctx-005
+    name: "Dokumentarkiv"
+    description: |
+      Arkivvisning per kunde med alle mottatte dokumenter. Sortert
+      på periode (år/måned), type, status.
+    ui_location: "Regnskapsfører Dashboard → Kunde → Arkiv"
+    access_control:
+      - "Regnskapsfører med kundetilgang"
+      - "Kunde kan se eget arkiv (begrenset visning)"
+    key_interactions:
+      - "Søk i arkiv"
+      - "Filtrer på periode/type"
+      - "Eksporter til ZIP"
+    data_displayed:
+      - "Dokumentliste med metadata"
+      - "Søkefelt"
+      - "Filtreingsvalg"
+
+# BRUKERREISER
+
+value_propositions:
+  - persona: "Kari Olsen, Regnskapsfører"
+    metrics:
+      pain: "Sender e-post, venter, purrer, mottar feil dokument"
+      benefit: "Oppretter forespørsel, får riktig dokument automatisk"
+      roi: "Fra 15 min til 2 min per dokumentforespørsel"
+    
+    current_situation: |
+      Kari trenger kontoutskrift fra en kunde. Hun skriver e-post:
+      "Hei, kan du sende kontoutskrift for februar?" Etter 4 dager
+      purrer hun. Kunden svarer med bilde av faktura (feil dokument).
+      Ny e-post: "Nei, kontoutskriften fra nettbanken". Tre dager til.
+      Til slutt får hun en PDF - men for januar, ikke februar. Kari
+      sukker og starter på nytt.
+
+    transformation_moment: |
+      Kari oppretter forespørsel: "Kontoutskrift, februar 2025". Hun
+      velger malen som inkluderer bilde av hvordan kontoutskrift ser
+      ut. Kunden får oppgaven, ser eksempelbildet, logger inn i nettbank,
+      laster ned PDF, og laster opp i portalen. Kari får varsel: 
+      "Kontoutskrift mottatt fra Holm Bygg AS". Hun åpner, ser at det
+      er riktig periode, klikker "Godkjenn". Ferdig på 30 sekunder.
+
+    emotional_resolution: |
+      Kari opplever at dokumenter "bare kommer". Hun slipper å forklare
+      hva kontoutskrift er, slipper å purre, slipper å returnere feil
+      dokumenter. Malbiblioteket hennes vokser med gode beskrivelser,
+      og kundene leverer riktig første gang. Hun føler at systemet
+      jobber FOR henne, ikke MOT henne.
+
+  - persona: "Lars Holm, Daglig leder Holm Bygg AS"
+    metrics:
+      pain: "Vet ikke hva regnskapsfører mener med 'dokumentasjon'"
+      benefit: "Ser eksempel, vet akkurat hva som trengs"
+      roi: "Leverer riktig første gang, slipper pinlige følelsemails"
+    
+    current_situation: |
+      Lars får e-post: "Kan du sende dokumentasjon på firmabilkjøpet?"
+      Han tenker: kjøpskontrakten? Faktura? Kvittering? Forsikringsbrev?
+      Han sender alt han har, 8 vedlegg. Regnskapsfører svarer: "Trengte
+      bare kjøpekontrakten." Lars føler seg dum og brukte 20 minutter
+      på noe som skulle tatt 2.
+
+    transformation_moment: |
+      Lars får oppgave i portalen: "Kjøpekontrakt firmabil, reg.nr. 
+      XX 12345". Han ser eksempelbilde som viser en kjøpekontrakt med
+      markering av signaturfelt. Han forstår umiddelbart hva som trengs,
+      finner dokumentet i skuffen, tar bilde, laster opp. Én fil, riktig
+      dokument. Oppgaven forsvinner med grønn hake.
+
+    emotional_resolution: |
+      Lars føler seg kompetent. Han forstår hva regnskapsfører trenger
+      fordi forespørselen er tydelig. Ingen gjetning, ingen 
+      overlevering av "alt i tilfelle". Han oppfatter regnskapsføreren
+      som mer profesjonell fordi kommunikasjonen er presis.
+
+  - persona: "Mette Strand, Økonomiansvarlig i konsulentfirma"
+    metrics:
+      pain: "Sorterer bilag manuelt i mapper, usikker på status"
+      benefit: "Alt arkivert automatisk med søk"
+      roi: "Timer spart på arkivering, revisjon enklere"
+    
+    current_situation: |
+      Mette har en mappestruktur: Bilag 2025/01, Bilag 2025/02, osv.
+      Hun laster ned vedlegg fra e-post, gir dem navn, plasserer i
+      mapper. Men noen ganger glemmer hun, noen ganger dupliserer hun,
+      og når revisor spør om "faktura fra Byggmester Hansen i mars"
+      må hun lete gjennom 150 filer.
+
+    transformation_moment: |
+      Mette laster opp alle dokumenter til portalen. Systemet 
+      kategoriserer automatisk: "Faktura, mars 2025, Byggmester Hansen
+      AS". Når revisor spør, søker hun "Byggmester Hansen mars" og 
+      finner dokumentet på 2 sekunder. Hun kan eksportere hele arkivet
+      med ett klikk for revisjon.
+
+    emotional_resolution: |
+      Mette føler at hun endelig har profesjonell dokumenthåndtering
+      uten manuelt arbeid. Arkivet bygger seg selv. Revisjon blir
+      enklere fordi alt er på ett sted, søkbart, og komplett.
+
+  - persona: "Erik Lund, Senior regnskapsfører"
+    metrics:
+      pain: "Bruker tid på å sortere e-post-vedlegg"
+      benefit: "Dokumenter kommer ferdig kategorisert"
+      roi: "1 time spart per dag på sortering"
+    
+    current_situation: |
+      Erik får 50+ e-poster daglig med vedlegg. Han må åpne hver,
+      laste ned vedlegg, gi nye navn ("kunde_periode_type.pdf"), 
+      flytte til riktig mappe, og slette e-posten. Noen ganger 
+      kommer samme dokument flere ganger. Noen ganger mangler han
+      kontekst på hva dokumentet gjelder.
+
+    transformation_moment: |
+      Dokumenter kommer via portalen med full kontekst: kunde, 
+      forespørselstype, periode. De arkiveres automatisk. Erik 
+      åpner "Innkommende dokumenter", ser 8 nye, klikker gjennom
+      og godkjenner de som ser riktige ut. De som trenger oppfølging
+      returnerer han med ett klikk. Sortering som tok en time tar
+      nå ti minutter.
+
+    emotional_resolution: |
+      Erik føler at han bruker tiden på regnskapsarbeid, ikke 
+      filhåndtering. Han er mer effektiv, og kvaliteten øker fordi
+      han ikke gjør feil i navngiving eller plassering. Systemet
+      har overtatt det kjedeligste arbeidet.
+
+# SCENARIER
+
+scenarios:
+  - id: scn-001
+    name: "Opprette dokumentforespørsel med mal"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari trenger kontoutskrift for å avstemme bank"
+    trigger: "Åpner Holm Bygg AS → Ny forespørsel"
+    action: |
+      Kari velger malen "Kontoutskrift", som har forhåndsutfylt 
+      beskrivelse og eksempelbilde. Hun fyller inn periode "Februar
+      2025" og frist "20. mars". Klikker "Send til kunde".
+    outcome: |
+      Lars får oppgave i portalen. E-postvarsel sendt automatisk.
+    acceptance_criteria:
+      - "Mal-bibliotek viser 10+ vanlige dokumenttyper"
+      - "Mal inkluderer beskrivelse og valgfritt eksempelbilde"
+      - "Periode og frist kan settes manuelt"
+      - "Oppgave opprettes i kundeportalen umiddelbart"
+      - "E-postvarsel sendes til kunde"
+
+  - id: scn-002
+    name: "Kunde laster opp dokument"
+    actor: "Lars Holm, Daglig leder"
+    context: "Lars har sett oppgaven om kontoutskrift"
+    trigger: "Åpner oppgaven i portalen"
+    action: |
+      Lars leser instruksjonene, ser eksempelbildet, logger inn i
+      nettbanken, laster ned PDF, drar den til opplastingsfeltet.
+      Systemet validerer: PDF, 245 KB, OK. Lars klikker "Send".
+    outcome: |
+      Dokument lastet opp og koblet til forespørsel. Kari varsles.
+    acceptance_criteria:
+      - "Tillatte filtyper: PDF, JPG, PNG"
+      - "Maks filstørrelse: 25 MB"
+      - "Forhåndsvisning av opplastet fil"
+      - "Bekreftelsesmelding etter opplasting"
+      - "Regnskapsfører får varsel via dashboard og e-post"
+
+  - id: scn-003
+    name: "Gjennomgå og godkjenne dokument"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari har fått varsel om mottatt kontoutskrift"
+    trigger: "Klikker på varselet i dashboardet"
+    action: |
+      Kari ser dokumentet i forhåndsvisning. Hun sjekker at det er
+      kontoutskrift (ikke faktura), at perioden er februar 2025,
+      og at det ser komplett ut. Klikker "Godkjenn".
+    outcome: |
+      Dokumentet arkiveres. Oppgaven lukkes. Kunden kan se at det
+      er godkjent.
+    acceptance_criteria:
+      - "Forhåndsvisning fungerer for PDF og bilder"
+      - "Zoom og scroll i store dokumenter"
+      - "Godkjenn-knapp arkiverer og lukker oppgave"
+      - "Logg over hvem som godkjente og når"
+
+  - id: scn-004
+    name: "Returnere feil dokument"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kunden har sendt faktura i stedet for kontoutskrift"
+    trigger: "Åpner dokumentet og ser at det er feil type"
+    action: |
+      Kari klikker "Returner" og skriver: "Dette er en faktura, 
+      ikke kontoutskrift. Kontoutskrift finner du i nettbanken under
+      Konto → Last ned bevegelser." Sender.
+    outcome: |
+      Kunden får ny oppgave med returkommentar. Ny frist settes.
+    acceptance_criteria:
+      - "Returner-knapp krever kommentar (obligatorisk)"
+      - "Kunde får varsel om retur"
+      - "Ny oppgave opprettes med samme type + returkommentar"
+      - "Frist forlenges automatisk (konfigurerbar)"
+      - "Historikk viser retur og original"
+
+  - id: scn-005
+    name: "Søke i dokumentarkiv"
+    actor: "Mette Strand, Økonomiansvarlig"
+    context: "Revisor spør om faktura fra spesifikk leverandør"
+    trigger: "Åpner Arkiv → Søk"
+    action: |
+      Mette skriver "Byggmester Hansen mars 2025". Systemet søker
+      i filnavn, OCR-tekst og metadata. Returnerer 2 treff. Mette
+      klikker på den relevante, laster ned, sender til revisor.
+    outcome: |
+      Dokument funnet på sekunder. Revisjonsarbeid effektivisert.
+    acceptance_criteria:
+      - "Søk fungerer på filnavn, OCR-tekst og metadata"
+      - "Søkeresultat viser forhåndsvisning"
+      - "Last ned-knapp for eksport"
+      - "Søkehistorikk tilgjengelig"
+
+  - id: scn-006
+    name: "OCR-prosessering"
+    actor: "System"
+    context: "Kunde har lastet opp bilde av håndskrevet kvittering"
+    trigger: "Opplasting fullført"
+    action: |
+      System sender bildet til OCR-tjeneste. Tekst ekstraheres:
+      "Hansen Elektro, Arbeid: 2500 kr, MVA: 625 kr". Teksten lagres
+      som metadata på dokumentet.
+    outcome: |
+      Kvitteringen er nå søkbar på "Hansen Elektro" eller "2500".
+    acceptance_criteria:
+      - "OCR kjøres automatisk på alle opplastinger"
+      - "Støtter norsk og engelsk"
+      - "Håndskrift gjenkjennes (med lavere nøyaktighet)"
+      - "OCR-resultat synlig for regnskapsfører"
+      - "Fallback hvis OCR feiler (dokument lagres likevel)"
+
+# AVHENGIGHETER
+
+dependencies:
+  requires:
+    - id: fd-001
+      name: "Regnskapsfører Dashboard"
+      reason: |
+        Dokumentforespørsler vises og håndteres i dashboardet.
+    - id: fd-002
+      name: "Kundeportal"
+      reason: |
+        Dokumentopplasting skjer via kundeportalen.
+
+  enables:
+    - id: fd-004
+      name: "Godkjenningsflyt"
+      reason: |
+        Dokumenter kan kreve godkjenning (f.eks. signerte kontrakter).
+        Godkjenningsflyt bygger på dokumenthåndtering.
+
+# TEKNISKE NOTATER
+
+technical_notes: |
+  - OCR-tjeneste: Google Cloud Vision, AWS Textract, eller self-hosted Tesseract?
+  - Fillagring: objektlagring (S3/GCS) med kryptering at rest
+  - Maksimal filstørrelse bør balansere mot mobil-opplasting over 4G
+  - Bildeoptimalisering: konverter HEIC til JPG, komprimer store bilder
+  - Arkiv-retensjon: lovkrav for regnskapsdokumenter (5/10 år)
+  - Eksport for revisjon: ZIP med mappestruktur etter periode
+  - Fullstendig audit trail på alle dokumentoperasjoner

@@ -1,0 +1,343 @@
+# Feature Definition: Regnskapsfører Dashboard
+# Porteføljeoversikt for regnskapsførere
+
+id: fd-001
+name: "Regnskapsfører Dashboard"
+slug: "regnskapsforer-dashboard"
+status: draft
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Regnskapsførere med 40-60 kunder mangler en samlet oversikt over alle 
+    kunders status. De bruker Excel-lister, hukommelse og e-post-søk for å 
+    holde styr på hvem som venter på hva. Dette fører til at ting glipper,
+    deadlines overskrides, og regnskapsføreren opplever konstant stress.
+    Uten porteføljeoversikt er det umulig å jobbe proaktivt.
+
+  market_context: |
+    Regnskapssystemer som Tripletex og Visma fokuserer på enkeltkunde-regnskap,
+    ikke porteføljevisning. CRM-systemer er generiske og ikke tilpasset 
+    regnskapsbransjens arbeidsflyter. De fleste byråer har hjemmesnekrede
+    Excel-løsninger som blir utdatert og vanskelige å vedlikeholde.
+
+  contributes_to:
+    - Regnskapsfører.Oversikt.Portefølje
+    - Regnskapsfører.Effektivitet.Oppfølging
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Tid brukt på å finne kundestatus"
+      target: "Redusere fra 5-10 minutter til under 10 sekunder"
+      measurement: "Brukertesting og tidsmåling"
+    - metric: "Oversikt over ventende oppgaver"
+      target: "100% av ventende oppgaver synlige på ett sted"
+      measurement: "Brukerundersøkelse - 'har du full oversikt?'"
+    - metric: "Daglig bruk"
+      target: "80%+ av regnskapsførere åpner dashboard daglig"
+      measurement: "Innloggingsstatistikk"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når en regnskapsfører starter arbeidsdagen, vil de umiddelbart se 
+    status på alle sine kunder og hva som krever oppmerksomhet,
+    slik at de kan prioritere arbeidet og aldri glemme en deadline.
+
+  solution_approach: |
+    Et dashboard som viser alle regnskapsførerens kunder med status
+    (ok/venter på kunde/venter på meg/forfalt), filtrering og sortering
+    på segment, deadline og status. Varsler og oppgaveteller gir 
+    umiddelbar oversikt over hva som haster.
+
+  capabilities:
+    - id: cap-001
+      name: "Kundeliste med status"
+      description: |
+        Oversikt over alle kunder med tydelig statusindikator. Fargekoding
+        viser om alt er i orden (grønn), venter på kunde (gul), venter på 
+        regnskapsfører (blå), eller forfalt (rød). Klikk på kunde åpner
+        detaljvisning med alle oppgaver og dokumenter.
+
+    - id: cap-002
+      name: "Filtrering og sortering"
+      description: |
+        Filtrer på segment (AS, ENK, NUF), status, og kommende deadlines.
+        Sorter på navn, neste deadline, eller antall ventende oppgaver.
+        Lagrede filtre for vanlige visninger (f.eks. "Mine AS-kunder med 
+        forfalt").
+
+    - id: cap-003
+      name: "Oppgaveteller og varsler"
+      description: |
+        Badge i menylinjen viser antall oppgaver som venter. Varsler ved
+        nye dokumenter fra kunder, kommende frister (3 dager før),
+        og forfalte oppgaver. Kan konfigurere varselpreferanser.
+
+    - id: cap-004
+      name: "Hurtighandlinger"
+      description: |
+        Fra dashboardet kan regnskapsfører med ett klikk: sende purring,
+        opprette ny dokumentforespørsel, eller markere oppgave som fullført.
+        Minimerer behov for å navigere inn i hver kunde.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Hoved-dashboard"
+    description: |
+      Startside når regnskapsfører logger inn. Viser kundeoversikt med
+      statuskolonner, oppgaveteller, og varsler. Responsivt design som
+      fungerer på desktop og tablet.
+    ui_location: "Hovedside etter innlogging"
+    access_control:
+      - "Regnskapsførere ser kun sine tildelte kunder"
+      - "Teamledere kan se hele teamets portefølje"
+    key_interactions:
+      - "Scroll gjennom kundeliste"
+      - "Klikk på kunde for detaljer"
+      - "Filtrer på segment/status"
+      - "Hurtighandlinger fra listevisning"
+    data_displayed:
+      - "Kundens navn og organisasjonsnummer"
+      - "Segment (AS/ENK/NUF)"
+      - "Status med fargekode"
+      - "Neste deadline"
+      - "Antall ventende oppgaver"
+
+  - id: ctx-002
+    name: "Kunde-detaljvisning"
+    description: |
+      Utvidet visning av én kunde. Viser alle oppgaver, dokumenter,
+      historikk og kontaktinformasjon. Herfra kan regnskapsfører
+      håndtere alt relatert til denne kunden.
+    ui_location: "Dashboard → Klikk på kunde"
+    access_control:
+      - "Kun regnskapsfører tildelt denne kunden"
+    key_interactions:
+      - "Se liste over oppgaver"
+      - "Se mottatte dokumenter"
+      - "Opprett ny forespørsel"
+      - "Send melding til kunde"
+    data_displayed:
+      - "Kundeinfo (kontakter, telefon, e-post)"
+      - "Oppgaveliste med status"
+      - "Dokumenter mottatt"
+      - "Aktivitetshistorikk"
+
+# BRUKERREISER
+
+value_propositions:
+  - persona: "Kari Olsen, Regnskapsfører hos ECIT Bergen"
+    metrics:
+      pain: "Bruker 30+ minutter daglig på å lete i e-post og Excel for å finne kundestatus"
+      benefit: "Alt synlig på ett skjermbilde, oppdatert i sanntid"
+      roi: "30 min spart daglig = 10+ timer/måned"
+    
+    current_situation: |
+      Kari starter hver dag med å åpne Excel-filen hun kaller "Min oversikt". 
+      Den har 45 rader - én per kunde - med kolonner for siste kontakt, status,
+      og hva som venter. Men filen er alltid utdatert. Hun må sjekke e-posten
+      for å se om noen har svart, og ofte glemmer hun å oppdatere Excel. 
+      Resultatet er at hun aldri helt vet om hun har kontroll.
+
+    transformation_moment: |
+      Med dashboardet ser Kari umiddelbart alle 45 kunder med oppdatert status.
+      Røde flagg viser tre kunder med forfalte oppgaver. Hun klikker på den 
+      første, ser at årsoppgjørsdokumentene aldri ble levert, og sender purring
+      med ett klikk. På 5 minutter har hun gjort det som før tok 30 minutter
+      å oppdage og håndtere.
+
+    emotional_resolution: |
+      Kari føler seg endelig i kontroll. Angsten for å ha glemt noe er borte.
+      Hun starter dagen med overblikk i stedet for panikk. Kollegaene merker
+      at hun er mer avslappet, og kundene får raskere svar. Hun har til og med
+      tid til å ta en ekstra pause fordi ettermiddagene ikke lenger handler
+      om brannslukking.
+
+  - persona: "Erik Hansen, Teamleder regnskap hos ECIT Oslo"
+    metrics:
+      pain: "Må spørre hver regnskapsfører om status - mangler teamoversikt"
+      benefit: "Ser hele teamets portefølje og kan omfordele ressurser"
+      roi: "Bedre kapasitetsutnyttelse, færre overraskelser"
+    
+    current_situation: |
+      Erik leder et team på 6 regnskapsførere med til sammen 280 kunder. Hver
+      mandag har han statusmøte der alle rapporterer muntlig. Men mellom 
+      møtene aner han ikke om noen er overbelastet eller om deadlines er i
+      fare. Når en medarbeider blir syk, tar det timer å finne ut hvilke
+      kunder som må følges opp.
+
+    transformation_moment: |
+      Erik åpner team-dashboardet og ser umiddelbart at Lise har 12 forfalte
+      oppgaver mens Ole bare har 2. Han omfordeler to kunder til Ole midlertidig.
+      Når Maria ringer inn syk, klikker han på hennes portefølje og ser nøyaktig
+      hvilke kunder som har frister denne uken - og fordeler dem til teamet
+      på 10 minutter.
+
+    emotional_resolution: |
+      Erik går fra å føle at han leder i blinde til å ha full kontroll. 
+      Statusmøtene er kortere og mer fokuserte. Han kan gi konkret positiv
+      feedback til de som holder orden, og fange opp problemer før de
+      eskalerer. Teamet opplever ham som mer støttende fordi han ser hva
+      de faktisk jobber med.
+
+  - persona: "Anna Berg, Ny regnskapsfører hos ECIT Trondheim"
+    metrics:
+      pain: "Nyansatt, bruker timer på å forstå kundeporteføljen"
+      benefit: "Strukturert oversikt fra dag én"
+      roi: "Raskere produktiv, mindre opplæringstid"
+    
+    current_situation: |
+      Anna startet for tre uker siden og overtok 25 kunder fra en kollega 
+      som sluttet. Hun har en mappe med papirer, tilgang til regnskapssystemet,
+      og en e-postboks full av gammel korrespondanse. Hun aner ikke hvilke
+      kunder som har pågående saker, hvem som er vanskelige, eller hva som
+      haster. Hver dag føles som å grave i et uorganisert arkiv.
+
+    transformation_moment: |
+      Anna logger inn på dashboardet og ser alle 25 kunder med status. Hun
+      sorterer på "forfalt" og ser at to kunder har ventet på dokumenter i
+      over en måned - noe hun ikke visste. Hun klikker på hver kunde og ser
+      historikken: hva som ble sendt, hva som ble mottatt, og hva som mangler.
+      På en halvtime har hun bedre oversikt enn etter tre uker med graving.
+
+    emotional_resolution: |
+      Anna føler seg endelig som en kompetent regnskapsfører, ikke en som
+      bare prøver å overleve. Hun kan stille smarte spørsmål til teamlederen
+      fordi hun vet hva hun snakker om. Imposter syndrome avtar, og hun
+      begynner å se frem til arbeidsdagene i stedet for å grue seg.
+
+  - persona: "Per Nilsen, IT-ansvarlig hos ECIT"
+    metrics:
+      pain: "Support-henvendelser om 'hvor finner jeg X' tar tid"
+      benefit: "Selvforklarende system, færre henvendelser"
+      roi: "Redusert support-belastning"
+    
+    current_situation: |
+      Per får daglig spørsmål fra regnskapsførere: "Hvor finner jeg oversikten
+      over mine kunder?", "Hvordan ser jeg hvem som har levert?", "Kan du 
+      sende meg Excel-malen igjen?". Han har laget dokumentasjon, men ingen
+      leser den. Hjemmesnekrede Excel-løsninger krasjer, og han må fikse
+      formler. Han føler seg som en glorifisert Excel-support.
+
+    transformation_moment: |
+      Etter lansering av dashboardet synker support-henvendelsene med 70%.
+      Regnskapsførere finner det de trenger selv fordi systemet er intuitivt.
+      Når noen spør "hvor ser jeg status?", kan Per bare si "dashboardet" - 
+      og de finner det. Han kan endelig fokusere på strategiske IT-prosjekter
+      i stedet for daglig brannslukking.
+
+    emotional_resolution: |
+      Per føler at arbeidet hans endelig har strategisk verdi. Han sitter
+      ikke lenger fast i support-modus. Regnskapsførerne klager mindre og
+      takker mer. Han har tid til å planlegge neste integrasjon i stedet
+      for å lappe sammen gamle løsninger.
+
+# SCENARIER
+
+scenarios:
+  - id: scn-001
+    name: "Morgenoversikt"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari starter arbeidsdagen og vil vite hva som haster"
+    trigger: "Logger inn på Regnskapsbruker kl 08:00"
+    action: |
+      Kari ser dashboardet med alle 45 kunder. Hun sorterer på "forfalt først"
+      og ser at tre kunder har rødt flagg. Hun klikker på varselbadgen og 
+      ser at det kom to nye dokumenter i natt fra kunder.
+    outcome: |
+      Kari vet nøyaktig hva som haster og kan planlegge dagen. Hun starter
+      med de tre forfalte, håndterer de nye dokumentene, og jobber deretter
+      systematisk nedover listen.
+    acceptance_criteria:
+      - "Dashboard lastes på under 2 sekunder"
+      - "Alle kunder med forfalt status vises med rød markering"
+      - "Varselbadge viser korrekt antall nye hendelser"
+      - "Sortering på 'forfalt først' fungerer korrekt"
+
+  - id: scn-002
+    name: "Filtrering på segment"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari skal jobbe med AS-kunder denne formiddagen"
+    trigger: "Vil kun se AS-kunder med ventende oppgaver"
+    action: |
+      Kari klikker på filter-ikonet, velger segment "AS" og status "Venter 
+      på meg". Listen oppdateres til å vise kun de 8 AS-kundene som venter
+      på regnskapsførers handling.
+    outcome: |
+      Fokusert arbeidsliste. Kari jobber gjennom de 8 kundene uten å bli
+      distrahert av ENK-kunder som kan vente.
+    acceptance_criteria:
+      - "Filter-UI er tilgjengelig med ett klikk"
+      - "Kombinerte filtre (segment + status) fungerer"
+      - "Kundetall oppdateres ved filtrering"
+      - "Filter kan nullstilles enkelt"
+
+  - id: scn-003
+    name: "Hurtigpurring fra dashboard"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari ser at Kunde AS har forfalt oppgave"
+    trigger: "Vil sende purring uten å åpne kundedetaljer"
+    action: |
+      Kari holder musen over Kunde AS-raden og klikker på purre-ikonet.
+      En modal bekrefter: "Send påminnelse til kontakt@kundeas.no om 
+      'Manglende bilag januar'?" Kari klikker "Send".
+    outcome: |
+      Purring sendt til kunden. Status oppdateres til "Purret [dato]".
+      Kari fortsetter nedover listen uten å miste kontekst.
+    acceptance_criteria:
+      - "Purre-ikon synlig ved hover på forfalt kunde"
+      - "Bekreftelses-modal viser riktig e-post og oppgave"
+      - "E-post sendes innen 5 sekunder"
+      - "Status oppdateres i listen umiddelbart"
+
+  - id: scn-004
+    name: "Teamleder-oversikt"
+    actor: "Erik Hansen, Teamleder"
+    context: "Erik vil se hele teamets arbeidsmengde"
+    trigger: "Planlegger ressursfordeling for neste uke"
+    action: |
+      Erik bytter til "Teamvisning" i dashboardet. Han ser en oversikt
+      over alle 6 regnskapsførere med antall kunder, forfalte oppgaver,
+      og kommende deadlines per person. Han klikker på Lise for å se
+      hennes portefølje.
+    outcome: |
+      Erik identifiserer at Lise har 12 forfalte og Ole har 2. Han kan
+      ta en informert beslutning om omfordeling.
+    acceptance_criteria:
+      - "Teamvisning tilgjengelig for brukere med teamleder-rolle"
+      - "Viser aggregerte tall per regnskapsfører"
+      - "Drill-down til enkeltpersons portefølje fungerer"
+      - "Data er oppdatert (maks 5 min forsinkelse)"
+
+# AVHENGIGHETER
+
+dependencies:
+  requires: []
+  
+  enables:
+    - id: fd-002
+      name: "Kundeportal"
+      reason: |
+        Dashboardet viser status som oppdateres når kunder leverer i portalen.
+        Uten dashboard ville regnskapsfører ikke se hva kunder har gjort.
+    - id: fd-003
+      name: "Dokumenthåndtering"
+      reason: |
+        Dokumentforespørsler opprettes fra dashboard og status vises der.
+        Dashboard er kommandosentral for dokumentflyten.
+
+# TEKNISKE NOTATER
+
+technical_notes: |
+  - Dashboard må hente data fra flere kilder: kundebase, oppgaver, dokumenter
+  - Vurder sanntidsoppdatering (WebSocket) vs. polling for varsler
+  - Filtrering bør skje client-side for responsivitet med <100 kunder
+  - Teamvisning krever rollebasert tilgangskontroll
+  - Mobile-visning bør prioriteres for tablet-bruk på farten

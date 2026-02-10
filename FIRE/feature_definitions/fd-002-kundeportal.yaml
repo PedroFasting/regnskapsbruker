@@ -1,0 +1,407 @@
+# Feature Definition: Kundeportal
+# Selvbetjeningsportal for regnskapskunder
+
+id: fd-002
+name: "Kundeportal"
+slug: "kundeportal"
+status: draft
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Regnskapskunder vet ofte ikke hva som forventes av dem eller hva 
+    regnskapsføreren jobber med. E-poster fra regnskapsfører forsvinner
+    i innboksen, og kunden blir usikker på om alt er i orden. Dette 
+    fører til forsinkelser, purringer, og en følelse av manglende kontroll
+    over egen økonomi.
+
+  market_context: |
+    Bank, forsikring og offentlige tjenester har satt forventningen om
+    kundeportaler med selvbetjening. Regnskapsbransjen henger etter.
+    Noen regnskapssystemer har innebygd kundetilgang, men den fokuserer
+    på regnskap - ikke på samhandling og oppgaver. Kundene vil vite
+    "hva må JEG gjøre?" - ikke navigere i bilagsføring.
+
+  contributes_to:
+    - Kunde.Selvbetjening.Oppgaver
+    - Kunde.Innsikt.Status
+    - Regnskapsfører.Effektivitet.Dokumentmottak
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Kundeinnloggingsrate"
+      target: "50%+ av kunder logger inn minst én gang per måned"
+      measurement: "Innloggingsstatistikk per kunde"
+    - metric: "Proaktiv dokumentlevering"
+      target: "70% av dokumenter levert uten purring"
+      measurement: "Andel leveranser før første purring"
+    - metric: "Kundetilfredshet"
+      target: "NPS > 40 for portal-brukere"
+      measurement: "In-app NPS-undersøkelse etter 30 dager"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når en regnskapskunde vil vite hva som forventes av dem, 
+    vil de logge inn og se en tydelig liste over oppgaver,
+    slik at de kan levere det som trengs og føle seg i kontroll.
+
+  solution_approach: |
+    En enkel, mobilvennlig portal der kunden ser "Mine oppgaver" 
+    med tydelige frister og handlinger. Dokumentopplasting med 
+    drag-and-drop, godkjenninger med ett klikk, og meldinger 
+    til regnskapsfører. Alt fokusert på "hva må jeg gjøre nå?"
+
+  capabilities:
+    - id: cap-001
+      name: "Oppgaveliste"
+      description: |
+        Oversikt over alle ventende oppgaver med frist og beskrivelse.
+        Tydelig prioritering: forfalt (rød), snart (gul), ok (grønn).
+        Klikk på oppgave for å fullføre (laste opp dokument, godkjenne,
+        svare på spørsmål).
+
+    - id: cap-002
+      name: "Dokumentopplasting"
+      description: |
+        Enkel opplasting av bilag og dokumenter. Drag-and-drop fra 
+        desktop, fotografering fra mobil, eller fil-velger. Automatisk
+        kategorisering basert på oppgavetypen. Bekreftelse når 
+        regnskapsfører har mottatt.
+
+    - id: cap-003
+      name: "Statusoversikt"
+      description: |
+        Dashboard som viser kundens status hos regnskapsfører: 
+        "Alt i orden", "Venter på deg", eller "Under arbeid hos oss".
+        Tidslinje med nylige hendelser og kommende frister.
+
+    - id: cap-004
+      name: "Meldinger"
+      description: |
+        Enkel meldingsfunksjon for kommunikasjon med regnskapsfører.
+        Erstatter e-post for regnskapsrelaterte spørsmål. Varsler
+        når regnskapsfører svarer. Historikk lagret og søkbar.
+
+    - id: cap-005
+      name: "Varsler og påminnelser"
+      description: |
+        E-post og push-varsler ved nye oppgaver, kommende frister,
+        og når regnskapsfører har sendt melding. Konfigurerbar 
+        frekvens (umiddelbart, daglig oppsummering, ukentlig).
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Kunde-hjemmeside"
+    description: |
+      Startside når kunde logger inn. Viser status-sammendrag,
+      antall ventende oppgaver, og eventuelle varsler. Enkelt
+      og oversiktlig - ingen overveldende informasjon.
+    ui_location: "Hovedside etter innlogging"
+    access_control:
+      - "Kunde ser kun egen bedrifts data"
+      - "Flere brukere fra samme bedrift kan ha tilgang"
+    key_interactions:
+      - "Se status-sammendrag"
+      - "Klikk på 'Mine oppgaver' for detaljer"
+      - "Se nylige meldinger fra regnskapsfører"
+    data_displayed:
+      - "Bedriftens navn og logo"
+      - "Status: 'Alt i orden' / 'X oppgaver venter'"
+      - "Neste frist"
+      - "Siste aktivitet"
+
+  - id: ctx-002
+    name: "Mine oppgaver"
+    description: |
+      Liste over alle oppgaver kunden må fullføre. Hver oppgave
+      har tittel, beskrivelse, frist, og handling (last opp, godkjenn,
+      svar). Sortering på frist som standard.
+    ui_location: "Meny → Mine oppgaver"
+    access_control:
+      - "Kun oppgaver tilknyttet denne kunden"
+    key_interactions:
+      - "Se oppgaveliste"
+      - "Klikk på oppgave for å fullføre"
+      - "Filtrer på status (ventende/fullført)"
+    data_displayed:
+      - "Oppgavetittel og beskrivelse"
+      - "Frist med fargekode"
+      - "Type (dokument/godkjenning/informasjon)"
+      - "Status (ventende/fullført)"
+
+  - id: ctx-003
+    name: "Dokumentopplasting"
+    description: |
+      Skjerm for å laste opp dokumenter til en oppgave. 
+      Støtter drag-and-drop, kamera (mobil), og fil-velger.
+      Forhåndsvisning før innsending.
+    ui_location: "Mine oppgaver → Velg oppgave → Last opp"
+    access_control:
+      - "Kun for oppgaver som krever dokument"
+    key_interactions:
+      - "Dra fil til opplastingsområde"
+      - "Ta bilde med mobil"
+      - "Velg fil fra enhet"
+      - "Bekreft og send"
+    data_displayed:
+      - "Oppgavebeskrivelse (hva trengs)"
+      - "Forhåndsvisning av valgt fil"
+      - "Størrelsesbegrensninger"
+
+  - id: ctx-004
+    name: "Meldinger"
+    description: |
+      Chat-lignende grensesnitt for kommunikasjon med regnskapsfører.
+      Viser meldingshistorikk, støtter vedlegg.
+    ui_location: "Meny → Meldinger"
+    access_control:
+      - "Meldinger kun synlige for kunde og deres regnskapsfører"
+    key_interactions:
+      - "Skriv ny melding"
+      - "Legg ved dokument"
+      - "Se historikk"
+    data_displayed:
+      - "Meldingshistorikk med tidsstempel"
+      - "Avsender (kunde/regnskapsfører)"
+      - "Vedlegg"
+
+# BRUKERREISER
+
+value_propositions:
+  - persona: "Lars Holm, Daglig leder i Holm Bygg AS"
+    metrics:
+      pain: "E-post fra regnskapsfører forsvinner, glemmer å levere bilag"
+      benefit: "Tydelig oppgaveliste, varsler før frist"
+      roi: "Unngår purregebyr og forsinkelser"
+    
+    current_situation: |
+      Lars driver et lite byggefirma med 8 ansatte. Regnskapet er noe han
+      "må gjøre", ikke noe han brenner for. E-posten hans er full av 
+      kundehenvendelser, leverandører og ansatte - og midt i alt dette
+      ligger forespørsler fra regnskapsfører som han stadig glemmer.
+      Minst én gang i måneden får han en irritert purring, og han føler
+      seg som en dårlig kunde selv om han egentlig vil gjøre rett.
+
+    transformation_moment: |
+      Lars får en SMS: "Du har 2 oppgaver som forfaller om 3 dager". Han
+      åpner appen på telefonen, ser at han må levere bilag for februar
+      og godkjenne lønnskjøring. Han tar bilde av bilagene med mobilen,
+      laster opp, og godkjenner lønnen - alt på 5 minutter i lunsjpausen.
+      Han lukker appen og vet at alt er levert. Ingen purring denne måneden.
+
+    emotional_resolution: |
+      Lars føler seg som en god kunde for første gang. Ikke fordi regnskapet
+      plutselig er spennende, men fordi han vet at han har kontroll. Han
+      anbefaler regnskapsføreren til andre byggmestre, nettopp fordi 
+      "de har et system som gjør det enkelt for oss som ikke kan regnskap".
+      Relasjonen til regnskapsfører har gått fra "nødvendig onde" til 
+      "profesjonelt partnerskap".
+
+  - persona: "Mette Strand, Økonomiansvarlig i Strand Konsult AS"
+    metrics:
+      pain: "Bruker tid på å koordinere med regnskapsfører via e-post"
+      benefit: "Alt samlet på ett sted, sporbar historikk"
+      roi: "Timer spart på e-post-leting"
+    
+    current_situation: |
+      Mette er økonomiansvarlig i et konsulentfirma med 25 ansatte. Hun
+      har god orden, men sliter med e-post-koordinering med regnskapsfører.
+      "Sendte du bilagene for mars?" - "Ja, i e-post 14. mars" - "Finner
+      den ikke, kan du sende på nytt?". Hun har mapper med kopier av alt,
+      men føler at mye tid går til å spore opp hva som er sendt og mottatt.
+
+    transformation_moment: |
+      Mette logger inn i portalen og ser full historikk: hvilke dokumenter
+      hun har sendt, når de ble mottatt, og status på hver. Når regnskapsfører
+      spør om bilagene for mars, kan hun peke på portalen: "Levert 14. mars
+      kl 14:32, se under 'Fullførte oppgaver'". Diskusjonen er over på 
+      10 sekunder i stedet for 10 minutter med e-post-graving.
+
+    emotional_resolution: |
+      Mette føler at hun endelig har et profesjonelt verktøy som matcher
+      hennes ordenssans. Hun slipper å lure på om ting er mottatt - alt
+      er sporbart. Kommunikasjonen med regnskapsfører er blitt mer 
+      effektiv, og hun bruker tiden på analyse i stedet for administrasjon.
+
+  - persona: "Ole Bakken, Enkeltpersonforetak (konsulent)"
+    metrics:
+      pain: "Usikker på hva regnskapsfører gjør, føler ikke kontroll"
+      benefit: "Ser status og hva som skjer"
+      roi: "Trygghet og oversikt"
+    
+    current_situation: |
+      Ole er selvstendig IT-konsulent. Han fakturerer kundene, sender
+      bilag til regnskapsfører en gang i året, og betaler fakturaen.
+      Men han aner egentlig ikke hva regnskapsføreren gjør, om alt er
+      i orden skattemessig, eller om han burde gjøre noe annerledes.
+      Han føler seg litt i blinde - og betaler for en tjeneste han 
+      ikke helt forstår verdien av.
+
+    transformation_moment: |
+      Ole logger inn for første gang og ser en tidslinje: "Årsoppgjør
+      2025 under arbeid", "Næringsoppgave sendt til Altinn 15. mars",
+      "MVA-melding levert for Q1". Plutselig ser han hva han betaler for.
+      Han klikker på en melding fra regnskapsfører: "Husk å sende 
+      kjørebok for firmabil innen 1. april". Nå forstår han verdien.
+
+    emotional_resolution: |
+      Ole føler seg som en informert kunde, ikke en passiv mottaker av
+      faktura. Han kan se at regnskapsføreren faktisk gjør mye arbeid,
+      og han verdsetter tjenesten høyere. Tilliten til regnskapsfører
+      øker fordi alt er transparent. Han føler kontroll over økonomien
+      selv om han ikke gjør regnskapet selv.
+
+  - persona: "Kari Olsen, Regnskapsfører (sekundær persona)"
+    metrics:
+      pain: "Purrer kunder manuelt, venter på svar"
+      benefit: "Kunder leverer selv, færre purringer"
+      roi: "60% reduksjon i purretid"
+    
+    current_situation: |
+      Kari sender dokumentforespørsler via e-post. Hun må formulere 
+      hver e-post, vente på svar, sende purring etter en uke, og ofte
+      ringe til slutt. For 45 kunder blir dette et daglig sisyfosarbeid.
+      Hun anslår at 30% av arbeidstiden går til å jage dokumenter - 
+      tid hun heller ville brukt på verdiskapende regnskapsarbeid.
+
+    transformation_moment: |
+      Kari oppretter en dokumentforespørsel i systemet. Kunden får
+      automatisk varsel, ser oppgaven i portalen, og laster opp. Kari
+      får varsel når dokumentet er mottatt - uten en eneste e-post.
+      For kunder som ikke leverer, sender systemet automatisk påminnelse
+      etter 3 og 7 dager. Kari slipper å huske hvem som må purres.
+
+    emotional_resolution: |
+      Kari opplever at kundene "leverer selv". Hun bruker mindre tid
+      på jaging og mer tid på analyse og rådgivning. Relasjonene til
+      kundene blir bedre fordi interaksjonene handler om innhold, ikke
+      om "du glemte å sende". Hun føler seg som en rådgiver, ikke en
+      inkassator.
+
+# SCENARIER
+
+scenarios:
+  - id: scn-001
+    name: "Første innlogging"
+    actor: "Lars Holm, Daglig leder"
+    context: "Lars har fått invitasjon på e-post fra regnskapsfører"
+    trigger: "Klikker på 'Aktiver konto' i e-posten"
+    action: |
+      Lars oppretter passord, logger inn, og ser velkomstskjerm med 
+      intro til portalen. Han ser at han har 2 ventende oppgaver.
+    outcome: |
+      Lars har fått tilgang og ser umiddelbart hva han må gjøre.
+      Onboarding fullført på under 2 minutter.
+    acceptance_criteria:
+      - "Invitasjonslenke fungerer og utløper etter 7 dager"
+      - "Passord-krav: minimum 8 tegn"
+      - "Velkomstskjerm viser kort intro (kan hoppes over)"
+      - "Oppgaveteller vises på hjemmeside"
+
+  - id: scn-002
+    name: "Laste opp bilag fra mobil"
+    actor: "Lars Holm, Daglig leder"
+    context: "Lars sitter i bilen og vil sende bilag før han glemmer"
+    trigger: "Åpner appen, ser oppgave 'Bilag februar'"
+    action: |
+      Lars trykker på oppgaven, velger 'Ta bilde', fotograferer de tre
+      bilagene, og trykker 'Send'. Han får bekreftelse: "3 bilag mottatt".
+    outcome: |
+      Bilag levert på 1 minutt uten å finne PC eller printer/scanner.
+      Oppgaven markeres som fullført.
+    acceptance_criteria:
+      - "Kamera-tilgang fungerer på iOS og Android"
+      - "Flere bilder kan tas i sekvens"
+      - "Bildekvalitet tilstrekkelig for lesing (min 300 DPI)"
+      - "Bekreftelse vises umiddelbart"
+      - "Regnskapsfører får varsel om mottak"
+
+  - id: scn-003
+    name: "Godkjenne lønnskjøring"
+    actor: "Lars Holm, Daglig leder"
+    context: "Regnskapsfører har forberedt lønnskjøring og ber om godkjenning"
+    trigger: "Lars får varsel: 'Lønnskjøring mars venter på godkjenning'"
+    action: |
+      Lars åpner oppgaven, ser oversikt over lønnskjøringen (antall 
+      ansatte, total sum), og klikker 'Godkjenn'. Han får bekreftelse.
+    outcome: |
+      Lønnskjøring godkjent digitalt. Regnskapsfører kan kjøre lønn.
+    acceptance_criteria:
+      - "Oversikt viser nøkkeltall (antall ansatte, brutto, netto)"
+      - "Godkjenn-knapp krever bekreftelse ('Er du sikker?')"
+      - "Godkjenning logges med tidsstempel og bruker"
+      - "Regnskapsfører varsles umiddelbart"
+
+  - id: scn-004
+    name: "Stille spørsmål til regnskapsfører"
+    actor: "Ole Bakken, ENK-konsulent"
+    context: "Ole lurer på om han kan trekke fra hjemmekontor"
+    trigger: "Vil spørre regnskapsfører uten å finne e-postadresse"
+    action: |
+      Ole går til Meldinger, skriver "Kan jeg trekke fra hjemmekontor-
+      utgifter?", og sender. Han får bekreftelse at meldingen er sendt.
+    outcome: |
+      Meldingen er sendt til regnskapsfører som svarer i portalen.
+      Ole får e-postvarsel når svar kommer.
+    acceptance_criteria:
+      - "Melding sendes og lagres i historikk"
+      - "Regnskapsfører ser meldingen i sitt dashboard"
+      - "Ole får e-post/push når svar kommer"
+      - "Meldingstråd er søkbar senere"
+
+  - id: scn-005
+    name: "Automatisk påminnelse"
+    actor: "System (på vegne av Kari Olsen)"
+    context: "Lars Holm har ikke levert bilag 3 dager før frist"
+    trigger: "System-jobb kjører kl 08:00 daglig"
+    action: |
+      System sjekker oppgaver med frist om 3 dager som ikke er fullført.
+      Sender automatisk e-post til Lars: "Påminnelse: Bilag februar 
+      forfaller om 3 dager".
+    outcome: |
+      Lars minnes på oppgaven. Kari slipper å sende manuell purring.
+    acceptance_criteria:
+      - "Påminnelse sendes 3 dager før frist (konfigurerbart)"
+      - "E-post inneholder lenke direkte til oppgaven"
+      - "Kun én påminnelse per oppgave per frist-terskel"
+      - "Kari kan se at påminnelse er sendt"
+
+# AVHENGIGHETER
+
+dependencies:
+  requires:
+    - id: fd-001
+      name: "Regnskapsfører Dashboard"
+      reason: |
+        Kundeportalen oppretter oppgaver og sender dokumenter som må 
+        vises i regnskapsførers dashboard. Uten dashboard har ikke
+        regnskapsfører noe sted å se hva kundene har levert.
+
+  enables:
+    - id: fd-003
+      name: "Dokumenthåndtering"
+      reason: |
+        Kundeportalen er kanalen der dokumenter lastes opp. Dokumenthåndtering
+        utvider med kategorisering, OCR og arkivering.
+    - id: fd-004
+      name: "Godkjenningsflyt"
+      reason: |
+        Godkjenninger skjer i kundeportalen. Godkjenningsflyt-featuren 
+        utvider med flertrinns-godkjenning og signatur.
+
+# TEKNISKE NOTATER
+
+technical_notes: |
+  - Mobil-app prioritert: responsive web eller native app?
+  - Autentisering: BankID, Vipps login, eller enkel e-post/passord?
+  - Push-varsler krever native app eller PWA med service worker
+  - Bildekomprimering client-side før opplasting (spar båndbredde)
+  - Støtte for flere brukere per bedrift (tilgangsstyring)
+  - GDPR: kunden eier sine data, eksportmulighet

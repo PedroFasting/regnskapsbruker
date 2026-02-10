@@ -1,0 +1,435 @@
+# Feature Definition: Godkjenningsflyt
+# Digital godkjenning og signatur for regnskapsrelaterte dokumenter
+
+id: fd-004
+name: "Godkjenningsflyt"
+slug: "godkjenningsflyt"
+status: draft
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Regnskapsførere jager signaturer via e-post, papir og telefon.
+    "Kan du signere årsoppgjøret og sende tilbake?" Kunden printer,
+    signerer, scanner, sender e-post. Eller verst: glemmer. Prosessen
+    tar dager/uker, og regnskapsfører har ingen oversikt over hvem
+    som har signert og hvem som venter.
+
+  market_context: |
+    BankID-signering og e-signatur er utbredt i Norge (lån, forsikring,
+    offentlige tjenester). Regnskapsbransjen bruker det delvis for
+    årsoppgjør, men ad-hoc. Det mangler en integrert flyt der 
+    godkjenninger er sporbare, påminnelser automatiseres, og status
+    er synlig for alle parter.
+
+  contributes_to:
+    - Regnskapsfører.Signatur.Effektivitet
+    - Kunde.Godkjenning.Enkelhet
+    - Compliance.Revisjon.Sporbarhet
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Tid fra utsendelse til signatur"
+      target: "Median < 24 timer"
+      measurement: "Tid fra godkjenningsforespørsel til fullført signatur"
+    - metric: "Fullføringsrate"
+      target: "> 95% fullført innen 7 dager"
+      measurement: "Andel godkjenninger fullført uten purring"
+    - metric: "Manuell oppfølgingstid"
+      target: "90% reduksjon vs baseline"
+      measurement: "Timer brukt på signatur-jaging per måned"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når regnskapsfører trenger kundens godkjenning på et dokument 
+    (årsoppgjør, kontrakt, fullmakt), vil de sende en digital 
+    godkjenningsforespørsel slik at kunden kan signere med ett klikk
+    og alle parter ser status i sanntid.
+
+  solution_approach: |
+    Integrert godkjenningsflyt i kundeportalen med støtte for enkel
+    "Jeg godkjenner"-knapp (for internt bruk) og BankID-signatur 
+    (for juridisk bindende dokumenter). Automatiske påminnelser,
+    full historikk, og revisjonsspor.
+
+  capabilities:
+    - id: cap-001
+      name: "Opprett godkjenningsforespørsel"
+      description: |
+        Regnskapsfører laster opp dokument og velger godkjenningstype:
+        1) Enkel godkjenning (klikk-bekreftelse)
+        2) E-signatur (juridisk bindende med BankID/Vipps)
+        3) Flertrinns (flere parter må godkjenne, rekkefølge valgfri)
+        Settes frist og mottakere.
+
+    - id: cap-002
+      name: "Kunde-godkjenning"
+      description: |
+        Kunden ser dokument i portalen, leser gjennom, og godkjenner.
+        For enkel godkjenning: "Jeg bekrefter at jeg har lest og 
+        godkjenner". For BankID: redirect til signering og tilbake.
+
+    - id: cap-003
+      name: "Flertrinns godkjenning"
+      description: |
+        Noen dokumenter krever flere godkjennere (f.eks. daglig leder
+        OG styreleder). Systemet sporer hvem som har godkjent, hvem
+        som venter. Kan settes opp i parallell eller sekvens.
+
+    - id: cap-004
+      name: "Automatiske påminnelser"
+      description: |
+        Hvis godkjenning ikke fullføres innen X dager, sendes 
+        automatisk påminnelse. Konfigurerbar frekvens og innhold.
+        Regnskapsfører varsles hvis godkjenning er forfalt.
+
+    - id: cap-005
+      name: "Status og historikk"
+      description: |
+        Full oversikt: hvem ble bedt om å godkjenne, når ble forespørsel
+        sendt, når ble påminnelser sendt, status per mottaker, når
+        ble godkjenning fullført. Revisjonsspor for compliance.
+
+    - id: cap-006
+      name: "Signert dokument"
+      description: |
+        Etter godkjenning/signering genereres signert versjon av 
+        dokumentet. For BankID: signert PDF med sertifikat. For 
+        enkel godkjenning: PDF med godkjenningslogg vedlagt.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Opprett godkjenning"
+    description: |
+      Skjerm der regnskapsfører laster opp dokument, velger type
+      godkjenning, legger til mottakere, og setter frist.
+    ui_location: "Regnskapsfører Dashboard → Kunde → Ny godkjenning"
+    access_control:
+      - "Regnskapsfører med kundetilgang"
+    key_interactions:
+      - "Last opp dokument (PDF)"
+      - "Velg godkjenningstype"
+      - "Legg til mottaker(e)"
+      - "Sett frist"
+      - "Send forespørsel"
+    data_displayed:
+      - "Dokument-forhåndsvisning"
+      - "Mottakerliste (søk i kontakter)"
+      - "Frister (standard: 7 dager)"
+      - "Alternativ for påminnelser"
+
+  - id: ctx-002
+    name: "Godkjenningsoversikt (regnskapsfører)"
+    description: |
+      Liste over alle utsendte godkjenningsforespørsler. Viser status:
+      venter, delvis godkjent (flertrinns), fullført, forfalt.
+    ui_location: "Regnskapsfører Dashboard → Godkjenninger"
+    access_control:
+      - "Regnskapsfører ser alle kunder"
+    key_interactions:
+      - "Filtrer på status"
+      - "Klikk for å se detaljer"
+      - "Send manuell påminnelse"
+      - "Kanseller forespørsel"
+    data_displayed:
+      - "Dokument og kunde"
+      - "Mottakere med individuelle status"
+      - "Frist og dager igjen"
+      - "Sist sendte påminnelse"
+
+  - id: ctx-003
+    name: "Godkjenningsforespørsel (kunde)"
+    description: |
+      Skjerm i kundeportalen der kunden ser dokumentet og kan godkjenne.
+      Tydelig visning av hva som godkjennes.
+    ui_location: "Kundeportal → Mine oppgaver → [Godkjenning]"
+    access_control:
+      - "Kun mottaker av forespørselen"
+    key_interactions:
+      - "Les dokument (scroll gjennom)"
+      - "Klikk 'Godkjenn' (enkel)"
+      - "Start BankID-signering (e-signatur)"
+      - "Send tilbake med kommentar (nekt)"
+    data_displayed:
+      - "Dokumentvisning (innebygd PDF-viewer)"
+      - "Hvem ba om godkjenning"
+      - "Frist"
+      - "Type godkjenning som kreves"
+
+  - id: ctx-004
+    name: "Signeringsflyt (BankID)"
+    description: |
+      Redirect til ekstern signeringstjeneste (Signicat, Posten, etc).
+      Kunden autentiserer med BankID og signerer dokumentet.
+    ui_location: "Ekstern tjeneste (popup/redirect)"
+    access_control:
+      - "BankID-autentisering påkrevd"
+    key_interactions:
+      - "Autentiser med BankID"
+      - "Gjennomgå dokument i signeringsklient"
+      - "Bekreft signatur"
+      - "Redirect tilbake til portal"
+    data_displayed:
+      - "Dokument i signeringsklient"
+      - "Signeringsbekreftelse"
+
+  - id: ctx-005
+    name: "Godkjenningshistorikk"
+    description: |
+      Detaljert logg over én godkjenningsforespørsel. Full tidslinje:
+      opprettet, sendt, påminnelser, godkjent/signert.
+    ui_location: "Godkjenningsoversikt → Velg forespørsel → Historikk"
+    access_control:
+      - "Regnskapsfører og involverte parter"
+    key_interactions:
+      - "Scroll gjennom tidslinje"
+      - "Last ned signert dokument"
+      - "Se individuelle signaturer (flertrinns)"
+    data_displayed:
+      - "Komplett tidslinje med tidsstempel"
+      - "Hvem gjorde hva når"
+      - "Signert dokument (PDF)"
+
+# BRUKERREISER
+
+value_propositions:
+  - persona: "Kari Olsen, Regnskapsfører"
+    metrics:
+      pain: "Sender årsoppgjør på e-post, venter i uker på signatur"
+      benefit: "Digital signering fullført samme dag"
+      roi: "Fra 2 uker gjennomsnittlig ventetid til 2 dager"
+    
+    current_situation: |
+      Det er april, og Kari skal ha signert 45 årsoppgjør før fristen.
+      Hun sender PDF-er på e-post: "Vennligst signer og returner".
+      Etter en uke har 15 svart. Hun sender purring. Etter to uker
+      mangler fortsatt 10. Hun ringer rundt. Til slutt, dagen før
+      frist, mangler fortsatt 2 signaturer fra kunder som er på ferie.
+
+    transformation_moment: |
+      Kari sender årsoppgjørene via portalen med BankID-signering.
+      Kundene får e-post med lenke direkte til signering. De fleste
+      signerer innen 24 timer - de får det opp på mobilen og bruker
+      30 sekunder. Systemet sender automatisk påminnelse til de som
+      venter. Kari ser statusoversikt: 43 signert, 2 venter. Hun
+      fokuserer bare på de 2 som faktisk trenger oppfølging.
+
+    emotional_resolution: |
+      Årsoppgjørsesongen som før var stressende er nå håndterbar.
+      Kari slipper å jage signaturer manuelt. Hun vet til enhver tid
+      hvem som mangler, og systemet tar mesteparten av purringen.
+      Hun føler kontroll i stedet for kaos.
+
+  - persona: "Lars Holm, Daglig leder Holm Bygg AS"
+    metrics:
+      pain: "Må printe, signere, scanne, e-poste - omstendelig"
+      benefit: "Signerer med BankID på mobilen på 30 sekunder"
+      roi: "15 minutter spart per signatur"
+    
+    current_situation: |
+      Lars får e-post med årsoppgjør. Han må: laste ned PDF, skrive ut,
+      finne penn, signere, scanne (eller ta bilde), lage e-post med
+      vedlegg, sende. Prosessen tar 15 minutter hvis alt går bra.
+      Men Lars' printer er tom for blekk, så han utsetter. Og utsetter.
+      To uker senere kommer purringen.
+
+    transformation_moment: |
+      Lars får SMS: "Årsoppgjør klart for signering". Han klikker på
+      lenken, logger inn med BankID på mobilen, ser dokumentet, 
+      scroller gjennom (det ser riktig ut), og trykker "Signer".
+      BankID-pop-up, godkjenn, ferdig. 30 sekunder, mens han venter
+      på rødt lys i bilen. Ingen printer, ingen scanning.
+
+    emotional_resolution: |
+      Lars opplever at regnskapsfører bruker moderne verktøy. 
+      Signeringen føles profesjonell, ikke som et papirarbeid fra 90-tallet.
+      Han signerer umiddelbart fordi det er så enkelt - ikke fordi
+      han endelig fant tid til å fikse printeren.
+
+  - persona: "Erik Lund, Senior regnskapsfører"
+    metrics:
+      pain: "Flere signaturer fra styre, umulig å koordinere"
+      benefit: "Flertrinns signering med automatisk sporing"
+      roi: "Uker spart på styresignatur-koordinering"
+    
+    current_situation: |
+      Erik har en kunde med 3 styremedlemmer som alle må signere
+      årsberetningen. Han sender e-post til alle tre. Etter 2 uker
+      har én signert, én har ikke respondert, én spurte "hvem andre
+      har signert?". Erik koordinerer manuelt, sender oppdateringer,
+      og ender med å ringe hvert enkelt styremedlem.
+
+    transformation_moment: |
+      Erik oppretter flertrinns godkjenning: daglig leder først,
+      deretter de to andre styremedlemmene i parallell. Systemet
+      sender til daglig leder, som signerer. Automatisk går det
+      videre til de to neste. De kan se at daglig leder har signert.
+      Begge signerer innen 48 timer. Erik får varsel: "Alle signaturer
+      fullført". Signert dokument tilgjengelig for nedlasting.
+
+    emotional_resolution: |
+      Erik føler at han endelig har et profesjonelt verktøy for
+      flerparts-signeringer. Han slipper å være manuell koordinator.
+      Styremedlemmene ser hvem andre som har signert, noe som 
+      skaper trygghet. Prosessen er transparent og effektiv.
+
+  - persona: "Anna Berg, Nystartet regnskapsfører (1-2 år erfaring)"
+    metrics:
+      pain: "Usikker på hvordan be om signatur profesjonelt"
+      benefit: "Ferdig flyt som ser profesjonell ut"
+      roi: "Quickstart, ingen lærekurve"
+    
+    current_situation: |
+      Anna har akkurat levert sitt første årsoppgjør som selvstendig.
+      Hun vet at kunden må signere, men er usikker på prosessen.
+      Skal hun sende på e-post? Bruke BankID? Hvor finner hun det?
+      Hun ender med å sende PDF på e-post og håpe det går bra.
+
+    transformation_moment: |
+      Anna bruker godkjenningsfunksjonen i portalen. Hun laster opp
+      årsoppgjøret, velger "BankID-signering", legger til kundens
+      e-post, og sender. Kunden får profesjonell e-post med lenke.
+      Anna ser status i dashboardet. Når signaturen kommer, får hun
+      ferdig signert PDF med sertifikat - akkurat som de store byråene.
+
+    emotional_resolution: |
+      Anna føler seg profesjonell fra dag én. Hun trenger ikke finne
+      ut av signeringsløsninger selv - det er innebygd. Kundene får
+      god opplevelse, og Anna sparer tid på å lære opp seg selv.
+
+# SCENARIER
+
+scenarios:
+  - id: scn-001
+    name: "Send enkel godkjenning"
+    actor: "Kari Olsen, Regnskapsfører"
+    context: "Kari ber kunde bekrefte lønnskjøring før utbetaling"
+    trigger: "Lønnskjøring ferdig beregnet"
+    action: |
+      Kari klikker "Be om godkjenning" på lønnskjøringen. Velger 
+      "Enkel godkjenning" (ingen BankID nødvendig for intern bekreftelse).
+      Skriver kort melding: "Vennligst bekreft at lønnskjøring for
+      mars ser riktig ut." Sender til daglig leder.
+    outcome: |
+      Daglig leder får oppgave i portal, ser oversikt over lønn,
+      klikker "Jeg godkjenner". Kari kan kjøre lønn.
+    acceptance_criteria:
+      - "Enkel godkjenning krever ikke BankID"
+      - "Bekreftelse logges med tidsstempel og bruker"
+      - "Regnskapsfører varsles ved godkjenning"
+      - "Oppgave lukkes automatisk"
+
+  - id: scn-002
+    name: "BankID-signering av årsoppgjør"
+    actor: "Lars Holm, Daglig leder"
+    context: "Årsoppgjør ferdig og krever signatur"
+    trigger: "Lars får e-post/SMS om signering"
+    action: |
+      Lars klikker på lenken, logger inn i portal, ser årsoppgjøret.
+      Klikker "Signer med BankID". Redirect til Signicat. Logger inn
+      med BankID, ser dokumentet, bekrefter signatur. Redirect tilbake.
+    outcome: |
+      Signert PDF genereres. Kari får varsel. Årsoppgjør arkiveres
+      med signatur.
+    acceptance_criteria:
+      - "BankID-signering via Signicat/Posten/tilsvarende"
+      - "Signert PDF inkluderer signatursertifikat"
+      - "Bruker redirectes tilbake til portal etter signering"
+      - "Feil i BankID håndteres gracefully (prøv igjen-knapp)"
+
+  - id: scn-003
+    name: "Flertrinns signering"
+    actor: "Erik Lund, Senior regnskapsfører"
+    context: "Årsberetning krever signatur fra 3 styremedlemmer"
+    trigger: "Årsberetning ferdig"
+    action: |
+      Erik oppretter flertrinns godkjenning:
+      - Trinn 1: Daglig leder (må signere først)
+      - Trinn 2: Styreleder og styremedlem (parallelt)
+      Dokumentet sendes til trinn 1.
+    outcome: |
+      Daglig leder signerer. Automatisk sendes til trinn 2. Begge
+      signerer (i vilkårlig rekkefølge). Dokumentet er komplett 
+      signert med alle tre signaturer.
+    acceptance_criteria:
+      - "Sekvensielle trinn: neste trinn starter etter forrige fullført"
+      - "Parallelle mottakere: kan signere i vilkårlig rekkefølge"
+      - "Status viser hvem som har signert, hvem som venter"
+      - "Komplett signert dokument har alle signaturer"
+
+  - id: scn-004
+    name: "Automatisk påminnelse"
+    actor: "System"
+    context: "Godkjenning ikke fullført 3 dager etter utsendelse"
+    trigger: "Daglig jobb kl 09:00"
+    action: |
+      Systemet finner alle ventende godkjenninger eldre enn 3 dager.
+      For hver, sender e-post til mottaker: "Påminnelse: Venter på din
+      godkjenning av [dokument]." Logger påminnelse sendt.
+    outcome: |
+      Mottaker minnes. Regnskapsfører kan se at påminnelse er sendt.
+    acceptance_criteria:
+      - "Påminnelse sendes 3 dager etter utsendelse (konfigurerbart)"
+      - "Maks 3 påminnelser før forespørsel eskaleres til regnskapsfører"
+      - "E-post inkluderer direkte lenke til godkjenning"
+      - "Påminnelse logges i historikk"
+
+  - id: scn-005
+    name: "Avvis godkjenning"
+    actor: "Lars Holm, Daglig leder"
+    context: "Lars ser feil i lønnskjøring"
+    trigger: "Åpner godkjenningsforespørsel"
+    action: |
+      Lars ser at en ansatt har feil timefradrag. Han klikker 
+      "Avvis" og skriver: "Per Hansen har 10 timer overtid som mangler."
+    outcome: |
+      Godkjenning avvist. Kari får varsel med kommentar. Lønnen 
+      kan korrigeres og sendes på nytt for godkjenning.
+    acceptance_criteria:
+      - "Avvis krever kommentar (obligatorisk)"
+      - "Regnskapsfører varsles umiddelbart"
+      - "Status settes til 'Avvist' med kommentar synlig"
+      - "Regnskapsfører kan opprette ny forespørsel etter korrigering"
+
+# AVHENGIGHETER
+
+dependencies:
+  requires:
+    - id: fd-001
+      name: "Regnskapsfører Dashboard"
+      reason: |
+        Godkjenningsforespørsler opprettes og spores via dashboardet.
+    - id: fd-002
+      name: "Kundeportal"
+      reason: |
+        Kunder godkjenner/signerer via portalen.
+    - id: fd-003
+      name: "Dokumenthåndtering"
+      reason: |
+        Dokumenter som skal godkjennes håndteres av dokumentmodulen.
+
+  enables: []
+    # Godkjenningsflyt er et "blad" i avhengighetsgrafen (MVP scope)
+
+# TEKNISKE NOTATER
+
+technical_notes: |
+  - E-signatur: Integrasjon med Signicat, Posten Signering, eller annen
+    eIDAS-godkjent leverandør
+  - BankID-nivå: Må bestemme om vi krever kundepålogging eller 
+    kan bruke signeringslenke uten innlogging
+  - Signert PDF: Standard PAdES (PDF Advanced Electronic Signatures)
+  - Kostnad: E-signatur har transaksjonskostnad (10-30 kr/signatur),
+    må vurdere prismodell
+  - Mobiloptimalisering: BankID på mobil er primær flyt
+  - Fallback: For kunder uten BankID, vurdere alternative 
+    autentiseringsmetoder (Vipps, passord+SMS)
+  - Arkivering: Signerte dokumenter lagres med signatursertifikat
+    i henhold til krav (10+ år)
