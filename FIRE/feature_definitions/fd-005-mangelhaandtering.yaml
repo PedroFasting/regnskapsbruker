@@ -1,0 +1,175 @@
+# Feature Definition: Mangelhåndtering
+# Identifisering og oppfølging av manglende bilag og dokumentasjon
+
+id: fd-005
+name: "Mangelhåndtering"
+slug: "mangelhaandtering"
+status: draft
+created: "2026-03-14"
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Etter at bankutskrifter er lastet opp og transaksjoner parset, 
+    mangler ofte bilag for mange transaksjoner. Regnskapsfører må
+    manuelt identifisere hva som mangler, lage lister, og kommunisere
+    dette til kunden. Kunden får en lang e-post de ikke aner hvordan
+    de skal håndtere. Resultatet er purring etter purring.
+    
+    Med automatisk mangel-identifisering og strukturert oppfølging
+    kan prosessen effektiviseres dramatisk.
+
+  market_context: |
+    De fleste regnskapsverktøy har ingen automatisk mangelliste-funksjon.
+    Regnskapsførere bruker Excel eller notater. Moderne portaler som
+    Fiken har noe støtte, men ikke koblet til aktiv oppfølging.
+
+  contributes_to:
+    - Regnskapsfører.Oppfølging.Automatisering
+    - Kunde.Oppgaver.Tydelighet
+    - AI.Mangelidentifisering.Automatisk
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Tid fra mangel identifisert til kunde varslet"
+      target: "< 1 minutt (automatisk)"
+      measurement: "Systemlogg"
+    - metric: "Andel mangler løst uten purring"
+      target: "> 70%"
+      measurement: "Mangler løst før første påminnelse"
+    - metric: "Gjennomsnittlig tid til komplett dokumentasjon"
+      target: "< 5 dager"
+      measurement: "Fra bankutskrift lastet opp til alle bilag mottatt"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når en bankutskrift er lastet opp og parset, vil systemet automatisk
+    identifisere transaksjoner som mangler bilag, slik at regnskapsfører
+    og kunde umiddelbart ser hva som må ordnes.
+
+  solution_approach: |
+    Automatisk analyse av transaksjoner mot eksisterende bilag.
+    Transaksjoner uten match flagges som "mangler bilag". Systemet
+    genererer automatisk forespørsler til kunde med tydelig liste
+    over hva som trengs. Batch-purring og statussporing.
+
+  capabilities:
+    - id: cap-001
+      name: "Automatisk mangel-identifisering"
+      description: |
+        Etter parsing av bankutskrift analyseres alle transaksjoner:
+        - Har transaksjon matchende bilag? (beløp/dato)
+        - Er transaksjon av type som krever bilag? (ikke overføring)
+        - Er beløp over terskel for bilagskrav?
+        Transaksjoner uten match flagges automatisk.
+
+    - id: cap-002
+      name: "Mangelliste per kunde"
+      description: |
+        Regnskapsfører ser aggregert liste over alle mangler for kunde:
+        - Transaksjonsdato, beløp, beskrivelse
+        - Antatt leverandør/kategori
+        - Dager siden transaksjon
+        Sortering på beløp, dato, eller kategori.
+
+    - id: cap-003
+      name: "Auto-genererte oppgaver"
+      description: |
+        Systemet oppretter automatisk oppgaver for kunden:
+        "Legg ved bilag for: Rema 1000, 15.02, 523 kr".
+        Kunde ser dette i sin portal med direkte opplasting.
+        Når bilag lastes opp, lukkes oppgaven automatisk.
+
+    - id: cap-004
+      name: "Batch-forespørsel"
+      description: |
+        Regnskapsfører kan sende samlet forespørsel for alle mangler:
+        "Vi mangler bilag for 12 transaksjoner - se liste i portal".
+        Unngår mange individuelle e-poster til kunde.
+
+    - id: cap-005
+      name: "Påminnelses-automatikk"
+      description: |
+        Automatiske påminnelser for uløste mangler:
+        - Første påminnelse etter X dager (konfigurerbar)
+        - Opptrappende frekvens
+        - Stopp når alle levert eller markert som N/A
+        Regnskapsfører kan pause automatikk per kunde.
+
+    - id: cap-006
+      name: "Unntak og ignorering"
+      description: |
+        Noen transaksjoner trenger ikke bilag (overføringer, 
+        lønnsutbetalinger til kjent konto, etc.). Regnskapsfører
+        kan markere transaksjon som "trenger ikke bilag" med 
+        begrunnelse. Systemet lærer mønster over tid.
+
+    - id: cap-007
+      name: "Aggregert porteføljeoversikt"
+      description: |
+        Regnskapsfører ser på tvers av alle kunder:
+        - Total antall mangler
+        - Kunder med flest mangler
+        - Eldste uløste mangel
+        Prioriteringsstøtte for hvem som skal følges opp først.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Kunde mangeloversikt"
+    description: |
+      Per-kunde visning av alle manglende bilag. Viser transaksjoner
+      uten match, med mulighet for å sende forespørsel eller markere
+      som "ikke nødvendig".
+    ui_location: "Regnskapsfører Dashboard → Kunde → Mangler"
+    access_control:
+      - "Regnskapsfører med kundetilgang"
+    key_interactions:
+      - "Se liste over transaksjoner uten bilag"
+      - "Velg transaksjoner og send forespørsel"
+      - "Marker som 'trenger ikke bilag'"
+      - "Se status på utsendte forespørsler"
+    data_displayed:
+      - "Transaksjonsdato og beløp"
+      - "Beskrivelse fra bank"
+      - "Antatt leverandør"
+      - "Forespørselsstatus (ikke sendt/sendt/levert)"
+
+  - id: ctx-002
+    name: "Kunde portal - mine mangler"
+    description: |
+      Kundens visning av hva som mangler. Enkelt og handlingsrettet:
+      "Du mangler 5 bilag - klikk for å laste opp".
+    ui_location: "Kundeportal → Mine oppgaver → Manglende bilag"
+    access_control:
+      - "Kunde-bruker"
+    key_interactions:
+      - "Se liste over manglende bilag"
+      - "Klikk transaksjon for å laste opp bilag"
+      - "Marker som 'har ikke kvittering' med forklaring"
+
+# REGLER OG LOGIKK
+
+rules:
+  - id: rule-001
+    name: "Bilagskrav-kategorier"
+    description: |
+      Transaksjoner kategoriseres automatisk basert på beskrivelse:
+      - Kjøp (krever alltid bilag over 250 kr)
+      - Abonnement (kan unntas med bekreftelse)
+      - Lønn/skatt (trenger ikke bilag)
+      - Overføring mellom egne konti (trenger ikke bilag)
+      - Ukjent (krever bilag for å avklare)
+
+  - id: rule-002
+    name: "Automatisk lukking"
+    description: |
+      Når kunde laster opp bilag som matcher transaksjon (beløp ±5%,
+      dato ±3 dager), kobles de automatisk og oppgaven lukkes.
+      Regnskapsfører kan åpne igjen hvis feil.

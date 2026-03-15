@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* ECIT Fonts */
+  --font-sans: "Manrope", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  /* ECIT Color Palette */
+  --color-ecit-navy: #002c55;
+  --color-ecit-navy-dark: #03223f;
+  --color-ecit-blue: #2377ba;
+  --color-ecit-blue-light: #57a5e4;
+  --color-ecit-green: #5bba7c;
+  --color-ecit-purple: #3e417f;
+  --color-ecit-ruby: #be3030;
+  --color-ecit-beige: #f4eddc;
+  --color-ecit-cream: #fbf7ef;
+  --color-ecit-beige-dark: #dacfb6;
+
+  /* ECIT Shadows */
+  --shadow-ecit: 0 20px 40px 0 rgba(47, 45, 39, 0.2);
+  --shadow-ecit-lg: 0 30px 60px rgba(47, 45, 39, 0.08), 0 20px 40px rgba(47, 45, 39, 0.1);
+  --shadow-ecit-header: 0 0 20px 0 rgba(0, 0, 0, 0.15);
+
+  /* shadcn/ui semantic colors — mapped to ECIT palette */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* ECIT: Zero border-radius — sharp rectangular edges */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+}
+
+:root {
+  /* ECIT-themed semantic colors */
+  --background: #fbf7ef;
+  --foreground: #03223f;
+  --card: #ffffff;
+  --card-foreground: #03223f;
+  --popover: #ffffff;
+  --popover-foreground: #03223f;
+  --primary: #002c55;
+  --primary-foreground: #ffffff;
+  --secondary: #f4eddc;
+  --secondary-foreground: #002c55;
+  --muted: #f4eddc;
+  --muted-foreground: #5a6a7a;
+  --accent: #f4eddc;
+  --accent-foreground: #002c55;
+  --destructive: #be3030;
+  --border: #dacfb6;
+  --input: #dacfb6;
+  --ring: #2377ba;
+  --chart-1: #002c55;
+  --chart-2: #2377ba;
+  --chart-3: #5bba7c;
+  --chart-4: #3e417f;
+  --chart-5: #57a5e4;
+  --radius: 0px;
+  --sidebar: #002c55;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #2377ba;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #03223f;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.15);
+  --sidebar-ring: #2377ba;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

@@ -1,0 +1,454 @@
+# Analyse: Golfklubber som regnskapskunder
+# Spesielle behov og muligheter for Regnskapsbruker
+
+id: segment-analysis-golfclubs
+version: "0.1"
+created_at: "2026-02-10"
+
+# ============================================================================
+# SEGMENTOVERSIKT
+# ============================================================================
+
+segment:
+  name: "Golfklubber"
+  legal_forms:
+    - type: "Medlemsforening (frivillig organisasjon)"
+      characteristics:
+        - "Ikke skattepliktig på medlemskontingent"
+        - "Må følge foreningslovgivning"
+        - "Demokratisk styrt (årsmøte, styre)"
+        - "Ofte omfattende vedtekter"
+    - type: "Aksjeselskap (anleggsdrift)"
+      characteristics:
+        - "Ofte eier selve banen/anlegget"
+        - "Leier ut til foreningen"
+        - "Normal selskapsbeskatning"
+        - "Kan ha samme styre som foreningen"
+        
+  market_size_norway:
+    antall_klubber: "~170 golfklubber"
+    medlemmer_totalt: "~100,000"
+    gjennomsnitt_medlemmer: "~600 per klubb"
+    klubber_med_ekstern_regnskapsforer: "Estimat: 60-70%"
+
+# ============================================================================
+# TYPISK DRIFT OG DOKUMENTFLYT
+# ============================================================================
+
+typical_operations:
+  inntektsstrømmer:
+    - name: "Medlemskontingent"
+      frequency: "Årlig (ofte faktureres jan-feb)"
+      volume: "Høyt (alle medlemmer)"
+      complexity: "Medium (ulike kategorier)"
+      
+    - name: "Greenfee (dagsspillere)"
+      frequency: "Løpende (sesong april-oktober)"
+      volume: "Høyt i sesong"
+      complexity: "Lav (standardpris)"
+      
+    - name: "Trening og kurs"
+      frequency: "Sesongbasert"
+      volume: "Medium"
+      complexity: "Medium (gruppepriser, pakker)"
+      
+    - name: "Utleie av utstyr"
+      frequency: "Løpende"
+      volume: "Medium"
+      complexity: "Lav"
+      
+    - name: "Kiosk/restaurant"
+      frequency: "Daglig i sesong"
+      volume: "Varierer"
+      complexity: "Medium (mva-pliktig)"
+      
+    - name: "Sponsoravtaler"
+      frequency: "Årlig"
+      volume: "Varierer stort"
+      complexity: "Medium"
+      
+    - name: "Turneringsinntekter"
+      frequency: "Sesongbasert"
+      volume: "Medium"
+      complexity: "Medium"
+
+  kostnadsstrømmer:
+    - name: "Banedrift og vedlikehold"
+      description: "Gresskjøp, maskiner, drivstoff, vedlikehold"
+      seasonality: "Høy mar-okt, lav nov-feb"
+      
+    - name: "Lønn og personal"
+      description: "Greenkeepere, proshop, kiosk, admin"
+      seasonality: "Flere sesongansatte"
+      
+    - name: "Maskiner og utstyr"
+      description: "Gressklippere, sprinklersystem"
+      note: "Store investeringer, avskrivninger"
+      
+    - name: "Leie/tomt"
+      description: "Hvis anlegg leies"
+      
+    - name: "Forsikring"
+      description: "Ansvarsforsikring, eiendom"
+      
+    - name: "IT og systemer"
+      description: "Bookingsystem, medlemssystem"
+
+  sesongprofil:
+    jan_feb: "Fakturering medlemskap, planlegging"
+    mar_apr: "Sesongstart, oppkjøring av bane"
+    mai_aug: "Høysesong, turneringer, greenfee"
+    sep_okt: "Nedtrapping, høstvedlikehold"
+    nov_des: "Banelukning, regnskap, budsjett, årsmøte"
+
+# ============================================================================
+# DOKUMENTER MELLOM REGNSKAPSFØRER OG GOLFKLUBB
+# ============================================================================
+
+document_flows:
+  regular_documents:
+    - document: "Medlemslister og kontingentrapport"
+      description: "Oversikt over innbetalte kontingenter per kategori"
+      source: "Klubbens medlemssystem (GolfBox, Min Golf, etc)"
+      frequency: "Månedlig i faktureringsperiode, kvartalsvis ellers"
+      pain_points:
+        - "Eksport fra medlemssystem kan være tungvint"
+        - "Kategorier matcher ikke alltid regnskapskontoplan"
+        - "Ubetalte kontingenter må avstemmes"
+        
+    - document: "Greenfee-rapport"
+      description: "Oversikt over dagsspillere og inntekt"
+      source: "Bookingsystem eller kassasystem"
+      frequency: "Ukentlig/månedlig i sesong"
+      pain_points:
+        - "Manuell oppsummering fra flere kilder"
+        - "MVA-beregning (if applicable)"
+        
+    - document: "Bankkontoutskrifter"
+      description: "Som for alle kunder"
+      frequency: "Månedlig"
+      pain_points:
+        - "Mange små transaksjoner i sesong"
+        - "Korttransaksjoner vs. fakturabetalinger"
+        
+    - document: "Bilag fra driften"
+      description: "Kjøp av gressfrø, diesel, reparasjoner"
+      source: "Greenkeeper, driftsleder"
+      frequency: "Løpende"
+      pain_points:
+        - "Papirkvitteringer fra butikker"
+        - "Greenkeeper har ikke alltid tid til bilagshåndtering"
+        - "Sesongsvingninger: mange bilag vår/sommer"
+        
+    - document: "Lønnsgrunnlag"
+      description: "Timer, timelister, feriepenger"
+      source: "Driftsleder, admin"
+      frequency: "Månedlig"
+      pain_points:
+        - "Mange deltid/sesongansatte"
+        - "Overtid i turneringshelger"
+        - "Frivillige vs. ansatte (skattemessig)"
+        
+    - document: "Sponsoravtaler og kontrakter"
+      description: "Inngåtte avtaler for inntektsføring"
+      source: "Styret/markedsansvarlig"
+      frequency: "Ved inngåelse/fornyelse"
+      pain_points:
+        - "Periodisering av flerårige avtaler"
+        - "Motytelser (reklame, greenfee) må verdsettes"
+        
+    - document: "Styreprotokoller"
+      description: "Beslutninger som påvirker regnskapet"
+      source: "Styreleder/sekretær"
+      frequency: "Etter hvert styremøte"
+      pain_points:
+        - "Regnskapsfører får ikke alltid kopi"
+        - "Beslutninger om investeringer/dugnad"
+        
+  annual_documents:
+    - document: "Årsregnskap med noter"
+      description: "Resultat, balanse, noter for årsmøte"
+      deadline: "Før årsmøte (typisk mars)"
+      pain_points:
+        - "Foreningsspesifikke noter"
+        - "Sammenligning med budsjett"
+        - "Presentasjon for årsmøte"
+        
+    - document: "Revisjonsberetning (hvis krav)"
+      description: "Noen foreninger har revisjonsplikt"
+      note: "Basert på vedtekter og størrelse"
+      
+    - document: "MVA-oppgjør"
+      description: "For mva-pliktig omsetning"
+      frequency: "Terminvis"
+      pain_points:
+        - "Blandet virksomhet (mva/ikke-mva)"
+        - "Greenfee vs kontingent"
+        
+    - document: "A-melding"
+      description: "Lønnsrapportering"
+      frequency: "Månedlig"
+      
+    - document: "Skattemelding (hvis AS)"
+      description: "For aksjeselskapsdelen"
+      deadline: "31. mai"
+
+# ============================================================================
+# SPESIELLE UTFORDRINGER FOR GOLFKLUBBER
+# ============================================================================
+
+special_challenges:
+  - challenge: "Frivillige vs. ansatte"
+    description: |
+      Golfklubber bruker mye dugnad og frivillige. Grensen mellom 
+      frivillig innsats og skattepliktig arbeid er ikke alltid klar.
+      Regnskapsfører trenger dokumentasjon på:
+      - Hvem gjør hva
+      - Er det kompensasjon involvert?
+      - Dugnadsarbeid vs. betalt arbeid
+    document_need: "Logg over frivillig arbeid og evt. kompensasjon"
+    
+  - challenge: "Todelt struktur (forening + AS)"
+    description: |
+      Mange golfklubber har både en forening (medlemmer) og et AS 
+      (anleggseier). Det er transaksjoner mellom enhetene som må 
+      dokumenteres og prises riktig (internprising).
+    document_need: |
+      - Leieavtale mellom forening og AS
+      - Fakturering mellom enhetene
+      - Dokumentasjon på armlengdes avstand
+      
+  - challenge: "Sesongsvingninger i bilagsmengde"
+    description: |
+      Vår/sommer: Mange bilag, hektisk drift
+      Høst/vinter: Lite aktivitet, men årsoppgjør
+    document_need: "Fleksibel bilagsinnsamling tilpasset sesong"
+    
+  - challenge: "Flere 'kasseapparat'"
+    description: |
+      Greenfee på klubbhuset, kiosk med kortbetaling, proshop med 
+      eget system, online booking. Mange inntektskilder som må 
+      samles og avstemmes.
+    document_need: "Avstemmingsrapporter fra alle systemer"
+    
+  - challenge: "Medlemssystem-integrasjon"
+    description: |
+      GolfBox, Min Golf, etc. har sin egen fakturering. Regnskapsfører
+      trenger eksport/rapport fra disse systemene for avstemming.
+    document_need: "Standardisert eksport fra medlemssystem"
+    
+  - challenge: "Kursvirksomhet og MVA"
+    description: |
+      Golfkurs kan være mva-pliktig eller fritatt avhengig av 
+      organisering. Dokumentasjon viktig for korrekt behandling.
+    document_need: "Oversikt over kursvirksomhet og prising"
+    
+  - challenge: "Sponsorer og motytelser"
+    description: |
+      Sponsoravtaler innebærer ofte motytelser (greenfee, reklame).
+      Disse må verdsettes og inntektsføres korrekt.
+    document_need: "Sponsoravtaler med motytelse-vurdering"
+
+# ============================================================================
+# PERSONAS I GOLFKLUBB-KONTEKST
+# ============================================================================
+
+personas:
+  - name: "Daglig leder / Klubbsjef"
+    role: "Hovedkontakt mot regnskapsfører"
+    responsibilities:
+      - "Samler bilag og dokumentasjon"
+      - "Godkjenner utbetalinger"
+      - "Kommuniserer med styre"
+    pain_points:
+      - "Travelt i sesong, lite tid til admin"
+      - "Ikke regnskapskyndig"
+      - "Jager bilag fra greenkeepere"
+    tech_savviness: "Medium"
+    
+  - name: "Styreleder"
+    role: "Formelt ansvarlig, signerer"
+    responsibilities:
+      - "Godkjenner årsregnskap"
+      - "Signerer styreprotokoller"
+      - "Overordnet ansvar"
+    pain_points:
+      - "Ønsker oversikt uten å gå i detaljer"
+      - "Frivillig verv - begrenset tid"
+    tech_savviness: "Varierer"
+    
+  - name: "Greenkeeper / Driftsleder"
+    role: "Operativ drift av banen"
+    responsibilities:
+      - "Kjøper inn materiell"
+      - "Har kvitteringer i lommen"
+    pain_points:
+      - "Ikke interessert i papirarbeid"
+      - "Ute på banen, ikke på kontor"
+      - "Kvitteringer blir våte/ødelagt"
+    tech_savviness: "Lav-medium"
+    
+  - name: "Økonomiansvarlig i styre"
+    role: "Styremedlem med økonomiansvar"
+    responsibilities:
+      - "Følger opp regnskap"
+      - "Bindeledd til regnskapsfører"
+      - "Presenterer for årsmøte"
+    pain_points:
+      - "Frivillig - begrenset tid"
+      - "Vil ha god oversikt"
+    tech_savviness: "Medium-høy"
+
+# ============================================================================
+# MULIGHETER FOR REGNSKAPSBRUKER
+# ============================================================================
+
+opportunities:
+  - opportunity: "Bilagsinnsamling fra greenkeeper"
+    description: |
+      Greenkeeper kan ta bilde av kvittering med mobilen og laste opp
+      direkte til portalen. Slipper å samle papirlapper.
+    value_proposition: |
+      "Kvitteringen er trygt lagret før du rekker å miste den."
+    feature_requirements:
+      - "Enkel mobilopplasting"
+      - "Kategorisering (drivstoff, utstyr, etc)"
+      - "Push-varsler 'Husk å ta bilde av kvittering'"
+      
+  - opportunity: "Avstemming av medlemssystem"
+    description: |
+      Automatisk import eller manuell opplasting av kontingentrapport
+      fra GolfBox/Min Golf. Regnskapsfører ber om dette månedlig.
+    value_proposition: |
+      "Kontingent-rapport levert på 2 minutter, ikke 2 dager."
+    feature_requirements:
+      - "Forespørselmal for 'Kontingentrapport fra GolfBox'"
+      - "Eksempelvisning av hvordan eksporten skal se ut"
+      - "Mulighet for automatisk påminnelse månedlig"
+      
+  - opportunity: "Signering av årsregnskap"
+    description: |
+      Årsregnskapet skal godkjennes av styret. BankID-signering med
+      flere parter (styreleder + styremedlemmer) er perfekt match.
+    value_proposition: |
+      "Hele styret signerer digitalt - klart for årsmøtet."
+    feature_requirements:
+      - "Flertrinns signering (3-5 personer)"
+      - "Varsel til signerende parter"
+      - "Signert dokument klart for arkiv og årsmøte"
+      
+  - opportunity: "Sponsoravtale-arkiv"
+    description: |
+      Alle sponsoravtaler samlet på ett sted med påminnelse om fornyelse.
+      Regnskapsfører kan se avtalene for korrekt inntektsføring.
+    value_proposition: |
+      "Alle sponsoravtaler samlet - vet når de fornyes og hva de er verdt."
+    feature_requirements:
+      - "Dokumentarkiv med kategori 'Sponsoravtaler'"
+      - "Mulighet for å sette 'utløpsdato' og påminnelse"
+      - "Felt for 'estimert verdi' og 'motytelse'"
+      
+  - opportunity: "Turneringsregnskap"
+    description: |
+      Ved turneringer er det mange småkjøp (premier, mat, osv).
+      En egen 'turneringspakke' med oppgaver kan forenkle.
+    value_proposition: |
+      "Turneringen ferdig bilagsført før tapene er delt ut."
+    feature_requirements:
+      - "Oppgavepakke: 'Turneringsbilag'"
+      - "Sjekkliste: Premier, bevertning, deltakeravgifter"
+
+# ============================================================================
+# MALER FOR GOLFKLUBBER
+# ============================================================================
+
+suggested_templates:
+  - name: "Kontingentrapport fra medlemssystem"
+    description: |
+      Periodisk rapport over innbetalte kontingenter per kategori 
+      (full, junior, senior, firmamedlem, etc).
+    instructions: |
+      Logg inn i GolfBox/Min Golf → Rapporter → Kontingentrapport →
+      Eksporter til Excel/PDF. Last opp her.
+    example_image: "Skjermbilde av typisk rapport"
+    default_frequency: "Månedlig jan-mar, kvartalsvis ellers"
+    
+  - name: "Greenfee-oppsummering"
+    description: |
+      Månedlig oversikt over dagsspillere, antall og inntekt.
+    instructions: |
+      Fra bookingsystem eller kassasystem. Oppsummering per uke/måned.
+    default_frequency: "Månedlig apr-okt"
+    
+  - name: "Bilag fra greenkeeper"
+    description: |
+      Kvitteringer og faktura fra innkjøp til banedrift.
+    instructions: |
+      Ta bilde av kvittering. Skriv kort hva det gjelder.
+    target_user: "Greenkeeper/driftsleder"
+    
+  - name: "Sponsoravtale"
+    description: |
+      Signert sponsoravtale for arkivering og regnskapsføring.
+    instructions: |
+      Last opp signert avtale. Oppgi avtaleperiode og verdi.
+      
+  - name: "Styreprotokoll"
+    description: |
+      Protokoll fra styremøte med vedtak.
+    instructions: |
+      Last opp signert protokoll etter styremøte.
+    default_frequency: "Etter hvert styremøte"
+    
+  - name: "Lønnsgrunnlag"
+    description: |
+      Timelister og grunnlag for lønnskjøring.
+    instructions: |
+      Samlede timelister for alle ansatte denne perioden.
+    default_frequency: "Månedlig"
+
+# ============================================================================
+# ANBEFALING
+# ============================================================================
+
+recommendation:
+  summary: |
+    Golfklubber er et interessant segment for Regnskapsbruker fordi:
+    
+    1. **Dokumentflyten er kompleks** - Mange kilder, sesongsvingninger,
+       flere involverte personer (daglig leder, greenkeeper, styre)
+    
+    2. **Eksisterende smerte** - Bilagsinnsamling fra greenkeeper,
+       avstemming av medlemssystem, signering av styredokumenter
+    
+    3. **Klart definert** - ~170 klubber i Norge, lett å identifisere
+       og målrette
+    
+    4. **Regnskapsførere spesialiserer seg** - Noen byrå har flere 
+       golfklubber, kan bli gode referansekunder
+    
+  mvp_relevant: |
+    Ja - MVP-funksjonalitetene treffer:
+    - Dokumentforespørsler → fungerer for alle dokumenttyper
+    - Kundeportal → daglig leder og greenkeeper kan bruke
+    - Automatiske påminnelser → løser 'glemte kontingentrapporter'
+    
+  post_mvp_considerations:
+    - "Integrasjon med GolfBox API (hvis tilgjengelig)"
+    - "Spesialmaler for golfklubb-dokumenter"
+    - "Sesongbaserte påminnelser (apr: sesongstart-sjekkliste)"
+    
+  pilot_angle: |
+    Hvis du kjenner en regnskapsfører med golfklubber som kunder,
+    kan dette være en god pilot-kandidat. Problemene er tydelige
+    og løsningen vil demonstrere verdi konkret.
+
+# ============================================================================
+# SPØRSMÅL TIL VIDERE UNDERSØKELSE
+# ============================================================================
+
+questions_to_explore:
+  - "Hvor mange regnskapsbyråer spesialiserer seg på idrettslag/foreninger?"
+  - "Har GolfBox/Min Golf API for kontingentdata?"
+  - "Hva koster regnskapstjenester for en typisk golfklubb?"
+  - "Er det andre idrettslag (fotball, tennis) med lignende behov?"

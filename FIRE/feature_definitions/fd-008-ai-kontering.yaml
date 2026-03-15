@@ -1,0 +1,247 @@
+# Feature Definition: AI-kontering
+# Automatisk konteringsforslag basert på AI-analyse
+
+id: fd-008
+name: "AI-kontering"
+slug: "ai-kontering"  
+status: draft
+created: "2026-03-14"
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Manuell kontering er tidkrevende og krever ekspertise. For hver
+    transaksjon må regnskapsfører:
+    - Identifisere riktig konto fra kontoplan (ofte 100+ konti)
+    - Bestemme MVA-kode (mange varianter)
+    - Vurdere avdeling/prosjekt
+    - Skrive beskrivelse
+    
+    Dette tar 1-2 minutter per transaksjon. Med 100+ transaksjoner
+    per kunde per måned blir det betydelig arbeid.
+
+  market_context: |
+    AI-basert regnskapsføring er i tidlig fase. Noen systemer tilbyr
+    enkel auto-kategorisering, men få har full kontering med MVA
+    og fradragshåndtering. Muligheten er å bygge et system som lærer
+    fra godkjente posteringer og blir stadig bedre.
+
+  contributes_to:
+    - Regnskapsfører.Kontering.Automatisering
+    - AI.Læring.Konteringsmønster
+    - Kvalitet.Konsistens.Kontering
+    - Effektivitet.Tid.Bokføring
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Automatiseringsgrad"
+      target: "> 70% av transaksjoner konterne automatisk"
+      measurement: "Andel posteringer godkjent uten endring"
+    - metric: "Nøyaktighet"
+      target: "> 95% korrekt konto"
+      measurement: "Stikkprøvekontroll av godkjente posteringer"
+    - metric: "Tidsbesparelse"
+      target: "80% reduksjon i konteringstid"
+      measurement: "Tid per transaksjon før/etter"
+    - metric: "Læringskurve"
+      target: "10% forbedring per måned første 6 mnd"
+      measurement: "Automatiseringsgrad over tid"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når en transaksjon med matchende bilag er klar for bokføring,
+    vil AI foreslå komplett kontering (konto, MVA, beskrivelse)
+    slik at regnskapsfører kan godkjenne med ett klikk.
+
+  solution_approach: |
+    AI-modell som analyserer transaksjon + bilag + kontekst og foreslår
+    kontering. Modellen trenes på godkjente posteringer for denne kunden
+    og lignende kunder. Konfidensscore styrer om forslag vises direkte
+    eller flagges for manuell vurdering.
+
+  capabilities:
+    - id: cap-001
+      name: "Transaksjon-analyse"
+      description: |
+        AI analyserer transaksjon basert på:
+        - Transaksjonstekst fra bank
+        - Bilagsinnhold (OCR-tekst)
+        - Beløp og dato
+        - Leverandør/mottaker
+        - Historikk for denne leverandør
+        Produserer strukturert forståelse av transaksjonen.
+
+    - id: cap-002
+      name: "Kontoforslag"
+      description: |
+        Basert på analyse foreslås konto fra kundens kontoplan:
+        - Matcher mot historiske posteringer
+        - Vurderer leverandørtype
+        - Tar hensyn til bilagets innhold
+        Viser topp 3 forslag med konfidenscore.
+
+    - id: cap-003
+      name: "MVA-behandling"
+      description: |
+        Automatisk MVA-kode basert på:
+        - Kontotype (noen konti har fast MVA)
+        - Bilagets MVA-detaljer (parset)
+        - Fradragsregler (representasjon, etc.)
+        Beregner MVA-beløp og velger riktig kode.
+
+    - id: cap-004
+      name: "Beskrivelse-generering"
+      description: |
+        AI genererer meningsfull beskrivelse:
+        - "Kontorrekvisita - Staples"
+        - "Representasjon - kunde Firma AS, 4 pers"
+        - "Programvare - Adobe Creative Cloud feb"
+        Standardisert format for konsistens.
+
+    - id: cap-005
+      name: "Avdeling/prosjekt"
+      description: |
+        Hvis kunden bruker avdelinger/prosjekter:
+        - Foreslår basert på historikk
+        - Matcher leverandør til prosjekt
+        - Flagges hvis usikkert
+        
+    - id: cap-006
+      name: "Batch-kontering"
+      description: |
+        Prosesser mange transaksjoner samtidig:
+        - AI konterne alle med høy konfidens automatisk
+        - Samler de som trenger review i egen liste
+        Regnskapsfører kan godkjenne 50 posteringer med få klikk.
+
+    - id: cap-007
+      name: "Læring og forbedring"
+      description: |
+        Systemet lærer fra:
+        - Godkjente posteringer (positiv feedback)
+        - Korrigerte posteringer (lærer fra feil)
+        - Avviste forslag
+        Modellen forbedres kontinuerlig per kunde.
+
+    - id: cap-008
+      name: "Konfidenshåndtering"
+      description: |
+        Basert på konfidenscore:
+        - Høy (>90%): Auto-godkjent, vises for review
+        - Medium (70-90%): Forslag vises, krever klikk
+        - Lav (<70%): Flagges for manuell kontering
+        Terskler kan justeres per kunde/regnskapsfører.
+
+    - id: cap-009
+      name: "Kvalitetskontroll"
+      description: |
+        Innebygde sjekker:
+        - Debet = kredit per postering
+        - MVA-beløp matcher bilag
+        - Konto finnes i kontoplan
+        - Periode er innenfor regnskapsår
+        Advarer ved inkonsistens.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Konteringsvisning"
+    description: |
+      Regnskapsfører ser transaksjon med AI-forslag. Kan godkjenne,
+      endre, eller avvise. Viser konfidens og begrunnelse.
+    ui_location: "Transaksjon → Kontering"
+    access_control:
+      - "Regnskapsfører"
+    key_interactions:
+      - "Se AI-forslag med konfidens"
+      - "Godkjenn (enter/klikk)"
+      - "Endre konto/MVA/beskrivelse"
+      - "Legg til avdeling/prosjekt"
+      - "Avvis og kontér manuelt"
+    data_displayed:
+      - "Transaksjon (dato, beløp, tekst)"
+      - "Tilknyttet bilag (miniatyr)"
+      - "Foreslått konto med navn"
+      - "MVA-kode og beløp"
+      - "Foreslått beskrivelse"
+      - "Konfidenscore (prosent eller farge)"
+
+  - id: ctx-002
+    name: "Batch-godkjenning"
+    description: |
+      Liste over alle transaksjoner klar for kontering. Høy-konfidens
+      forslag kan godkjennes i bulk.
+    ui_location: "Kunde → Kontering → Batch"
+    access_control:
+      - "Regnskapsfører"
+    key_interactions:
+      - "Se liste over ventende transaksjoner"
+      - "Filter: kun høy konfidens"
+      - "Velg alle / velg individuelle"
+      - "Godkjenn valgte"
+      - "Klikk for å se detalj/korrigere"
+
+  - id: ctx-003
+    name: "Konteringshistorikk"
+    description: |
+      Oversikt over godkjente posteringer. Søkbar på konto, periode,
+      leverandør. Kan korrigere feil i ettertid.
+    ui_location: "Kunde → Regnskap → Journal"
+    access_control:
+      - "Regnskapsfører"
+
+# AI-MODELL
+
+ai_model:
+  architecture: |
+    GPT-4 Turbo med function calling for strukturert output.
+    RAG (Retrieval-Augmented Generation) med kundens kontoplan
+    og historiske posteringer som kontekst.
+    
+  input:
+    transaction:
+      - "date"
+      - "amount"
+      - "description"
+      - "counterparty"
+    voucher:
+      - "ocr_text"
+      - "parsed_amount"
+      - "parsed_date"
+      - "parsed_vendor"
+      - "parsed_vat"
+    context:
+      - "chart_of_accounts"  # Kundens kontoplan
+      - "recent_postings"     # Siste 100 posteringer
+      - "vendor_history"      # Tidligere posteringer for denne leverandør
+      
+  output:
+    - account_code: "string"
+    - account_name: "string"
+    - vat_code: "string"
+    - vat_amount: "number"
+    - description: "string"
+    - department: "string | null"
+    - project: "string | null"
+    - confidence: "number (0-1)"
+    - reasoning: "string"
+    
+  training:
+    initial: "Generell norsk kontoplan-kunnskap"
+    continuous: "Lærer fra godkjente/korrigerte posteringer"
+    feedback_loop: |
+      - Godkjent uten endring → positiv signal
+      - Korrigert → lærer riktig svar
+      - Avvist → negativ signal for dette mønsteret
+      
+  performance_targets:
+    latency: "< 2 sekunder per transaksjon"
+    accuracy_initial: "> 60% korrekt konto"
+    accuracy_6_months: "> 85% korrekt konto"
+    cost_per_transaction: "< 0.05 NOK"

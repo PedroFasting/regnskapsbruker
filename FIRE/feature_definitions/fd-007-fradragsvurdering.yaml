@@ -1,0 +1,240 @@
+# Feature Definition: Fradragsvurdering
+# Automatisk vurdering og håndtering av fradragsrett
+
+id: fd-007
+name: "Fradragsvurdering"
+slug: "fradragsvurdering"
+status: draft
+created: "2026-03-14"
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Fradragsregler i Norge er komplekse og endres jevnlig. Regnskapsførere
+    må holde styr på:
+    - Representasjon: 50% MVA-fradrag på mat, 0% på alkohol
+    - Gaver: Maks 290 kr per gave for fradrag
+    - Reise: Dokumentasjonskrav for diett og kjøregodtgjørelse
+    - Privat bruk: Beregning av fordel ved firmabil, telefon, etc.
+    
+    Feil fradrag kan føre til tilleggsskatt og renter. Riktig håndtering
+    krever inngående kjennskap til reglene og god dokumentasjon.
+
+  market_context: |
+    Regnskapssystemer har grunnleggende MVA-støtte, men sjelden 
+    intelligente vurderinger av fradragsrett. Revisjonsverktøy er 
+    komplekse og dyre. AI kan demokratisere tilgang til kvalitetssjekk
+    av fradragsvurderinger.
+
+  contributes_to:
+    - Regnskapsfører.Fradrag.Korrekthet
+    - Compliance.Skatt.Dokumentasjon
+    - AI.Regler.Automatisering
+    - Kunde.Kostnadsoptimalisering
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Feil fradrag oppdaget"
+      target: "95%+ av potensielle feil flagget"
+      measurement: "Stikkprøver og revisjonskontroll"
+    - metric: "Automatisk kategorisering"
+      target: "> 80% riktig første gang"
+      measurement: "Andel AI-forslag som godkjennes uten endring"
+    - metric: "Dokumentasjon komplett"
+      target: "100% av fradrag har påkrevd dokumentasjon"
+      measurement: "Systemsjekk mot dokumentasjonskrav"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når en transaksjon skal bokføres, vil systemet automatisk vurdere
+    fradragsrett basert på regler og kontekst, slik at regnskapsfører
+    får forslag som er korrekt og dokumentert.
+
+  solution_approach: |
+    Regelmotor kombinert med AI-analyse. Regler for standard situasjoner
+    (representasjon, gaver, etc.) er hardkodet. AI supplerer med 
+    kontekstforståelse og identifisering av edge-cases. Systemet 
+    flagger transaksjoner som trenger ekstra oppmerksomhet.
+
+  capabilities:
+    - id: cap-001
+      name: "Automatisk kategorisering"
+      description: |
+        AI kategoriserer transaksjoner basert på:
+        - Leverandørnavn (restaurant → representasjon)
+        - Beløpsmønster
+        - Bilags-innhold (OCR)
+        - Historikk for denne kunden
+        Kategorien bestemmer hvilke fradragsregler som gjelder.
+
+    - id: cap-002
+      name: "Fradragsregler"
+      description: |
+        Regelmotor med oppdaterte norske skatteregler:
+        - Representasjon: 50% MVA-fradrag, krever deltakerliste
+        - Gaver til kunder: Maks 290 kr inkl. MVA for fradrag
+        - Gaver til ansatte: Egne regler for jubileum, etc.
+        - Reisekostnader: Legitimasjon vs. diett-satser
+        - Privat bruk: Fordelsberegning
+        Regler kan oppdateres uten kodeendring.
+
+    - id: cap-003
+      name: "Dokumentasjonskontroll"
+      description: |
+        Sjekk at påkrevd dokumentasjon finnes:
+        - Representasjon: Deltakerliste + formål
+        - Gaver: Mottakernavn + anledning
+        - Reise: Reiseprogramm/kalender + formål
+        Advarer hvis dokumentasjon mangler.
+
+    - id: cap-004
+      name: "Fradragsforslag"
+      description: |
+        Basert på analyse foreslås fradragsbehandling:
+        - "50% MVA-fradrag - representasjon"
+        - "0% fradrag - privat andel av telefon"
+        - "100% fradrag - forretningsmessig kjøp"
+        Med begrunnelse og konfidenscore.
+
+    - id: cap-005
+      name: "Flagging av risiko"
+      description: |
+        Transaksjoner med høy risiko flagges:
+        - Uvanlig høy representasjon vs. historikk
+        - Potensielt privat bruk uten avklaring
+        - Nærståendetransaksjoner
+        - Beløp nær grenseverdier
+        Regnskapsfører varsles for manuell vurdering.
+
+    - id: cap-006
+      name: "Periode-oppsummering"
+      description: |
+        Per kunde, per periode:
+        - Totalt fradragsført representasjon
+        - Gaver gitt (med mottakerliste)
+        - Flaggede transaksjoner som trenger oppfølging
+        Underlag for dialog med kunde og kvalitetskontroll.
+
+    - id: cap-007
+      name: "Revisjonslogg"
+      description: |
+        Full sporbarhet:
+        - Hvilken regel ble anvendt
+        - AI-konfidensscore
+        - Hvem godkjente fradrag
+        - Eventuell avklaring fra kunde
+        Dokumentasjon ved revisjon eller kontroll.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Fradragsvurdering ved kontering"
+    description: |
+      Når regnskapsfører ser på transaksjon, vises fradragsforslag
+      med begrunnelse. Kan godkjenne eller overstyre.
+    ui_location: "Transaksjon → Kontering → Fradrag"
+    access_control:
+      - "Regnskapsfører"
+    key_interactions:
+      - "Se foreslått fradragsbehandling"
+      - "Les begrunnelse og regel"
+      - "Godkjenn eller endre"
+      - "Legg til kommentar ved avvik"
+
+  - id: ctx-002
+    name: "Fradragsrapport"
+    description: |
+      Periodisk oversikt over fradragsbehandling. Summerer
+      representasjon, gaver, etc. for kvalitetskontroll.
+    ui_location: "Kunde → Rapporter → Fradrag"
+    access_control:
+      - "Regnskapsfører"
+    data_displayed:
+      - "Sum representasjon (med detaljer)"
+      - "Gaver gitt (mottakerliste)"
+      - "Flaggede transaksjoner"
+      - "Dokumentasjonsstatus"
+
+# FRADRAGSREGLER
+
+deduction_rules:
+  - id: rule-001
+    name: "Representasjon - mat og drikke"
+    category: "representation_food"
+    description: |
+      Bevertning av forretningsforbindelser (kunder, leverandører).
+      Ikke ansatte, ikke interne møter.
+    conditions:
+      - "Formål: Forretningsformål"
+      - "Deltakere: Eksterne parter + ansatte som vertskap"
+    vat_deduction: 0.50  # 50% MVA-fradrag
+    income_deduction: 1.0  # Full inntektsfradrag
+    documentation_required:
+      - "Deltakernavn og firma"
+      - "Antall deltakere"
+      - "Formål med representasjonen"
+      - "Bilag/kvittering"
+    thresholds:
+      warning_per_person: 1500  # Flagg over dette per person
+      
+  - id: rule-002
+    name: "Representasjon - kun alkohol"
+    category: "representation_alcohol"
+    conditions:
+      - "Kun alkoholholdig drikke, ingen mat"
+    vat_deduction: 0.0  # Ingen MVA-fradrag
+    income_deduction: 1.0
+    
+  - id: rule-003
+    name: "Gaver til forretningsforbindelser"
+    category: "business_gifts"
+    conditions:
+      - "Gave til eksterne (kunde, leverandør)"
+    thresholds:
+      max_per_gift: 290  # Inkl. MVA
+    vat_deduction: "full_if_under_threshold"
+    documentation_required:
+      - "Mottakernavn og firma"
+      - "Anledning"
+      - "Bilag"
+      
+  - id: rule-004
+    name: "Reisekostnader - legitimasjon"
+    category: "travel_documented"
+    conditions:
+      - "Reise i yrke/virksomhet"
+      - "Legitimerte utlegg"
+    vat_deduction: 1.0
+    income_deduction: 1.0
+    documentation_required:
+      - "Reiseprogramm eller kalender"
+      - "Formål med reisen"
+      - "Orig. kvitteringer"
+      
+  - id: rule-005
+    name: "Telefon/bredbånd - privat bruk"
+    category: "phone_private_use"
+    conditions:
+      - "Telefon/nett betalt av firma"
+      - "Ansatt kan bruke privat"
+    private_use_percentage: 0.50  # Standard 50% privat
+    taxable_benefit: true
+    documentation_required:
+      - "Avtale om telefondekning"
+      
+  - id: rule-006
+    name: "Firmabil - privat bruk"
+    category: "company_car"
+    conditions:
+      - "Bil eid/leaset av firma"
+      - "Tilgjengelig for privat bruk"
+    taxable_benefit: true
+    benefit_calculation: "Skatteetaten satser"
+    documentation_required:
+      - "Kjørebok hvis beregning"

@@ -1,10 +1,11 @@
 # Feature Definition: Kundeportal
-# Selvbetjeningsportal for regnskapskunder
+# Selvbetjeningsportal for regnskapskunder med AI-støttet arbeidsflyt
 
 id: fd-002
 name: "Kundeportal"
 slug: "kundeportal"
 status: draft
+updated: "2026-03-14"
 
 # STRATEGISK KONTEKST
 
@@ -22,11 +23,15 @@ strategic_context:
     Noen regnskapssystemer har innebygd kundetilgang, men den fokuserer
     på regnskap - ikke på samhandling og oppgaver. Kundene vil vite
     "hva må JEG gjøre?" - ikke navigere i bilagsføring.
+    
+    Med AI-drevet regnskapsføring blir kundens rolle mer fokusert:
+    laste opp data (bankutskrifter, bilag) og svare på avklaringer.
 
   contributes_to:
     - Kunde.Selvbetjening.Oppgaver
     - Kunde.Innsikt.Status
     - Regnskapsfører.Effektivitet.Dokumentmottak
+    - AI.DataInnsamling.Kvalitet
 
   tracks:
     - product
@@ -93,6 +98,29 @@ definition:
         E-post og push-varsler ved nye oppgaver, kommende frister,
         og når regnskapsfører har sendt melding. Konfigurerbar 
         frekvens (umiddelbart, daglig oppsummering, ukentlig).
+        
+    - id: cap-006
+      name: "Bankutskrift-opplasting"
+      description: |
+        Kunde laster opp bankutskrift (CSV/PDF) direkte i portalen.
+        Systemet viser hvilken periode som mangler. Etter opplasting
+        ser kunden status: "Prosesseres", "Fullført - X transaksjoner".
+        
+    - id: cap-007
+      name: "Bilag-matching"
+      description: |
+        Kunden ser transaksjoner som mangler bilag: "Rema 1000, 
+        15.02, 523 kr - mangler kvittering". Kan laste opp bilag
+        direkte mot transaksjon. AI foreslår matching basert på
+        beløp/dato.
+        
+    - id: cap-008
+      name: "Avklaringsbesvarelse"
+      description: |
+        Når regnskapsfører (eller AI) trenger avklaring, vises
+        spørsmål tydelig: "Middag 2.500 kr - Var dette firma eller
+        privat?" med enkle knapper/alternativer. Kunde kan legge
+        til kommentar og laste opp tilleggsdokumentasjon.
 
 # KONTEKSTER (UI)
 

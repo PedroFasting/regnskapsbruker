@@ -1,10 +1,11 @@
 # Feature Definition: Regnskapsfører Dashboard
-# Porteføljeoversikt for regnskapsførere
+# Porteføljeoversikt for regnskapsførere med AI-støtte
 
 id: fd-001
 name: "Regnskapsfører Dashboard"
 slug: "regnskapsforer-dashboard"
 status: draft
+updated: "2026-03-14"
 
 # STRATEGISK KONTEKST
 
@@ -21,10 +22,14 @@ strategic_context:
     ikke porteføljevisning. CRM-systemer er generiske og ikke tilpasset 
     regnskapsbransjens arbeidsflyter. De fleste byråer har hjemmesnekrede
     Excel-løsninger som blir utdatert og vanskelige å vedlikeholde.
+    
+    Med AI-drevet automatisering endres arbeidsflaten fra "jaging" til
+    "kvalitetskontroll og unntak-håndtering".
 
   contributes_to:
     - Regnskapsfører.Oversikt.Portefølje
     - Regnskapsfører.Effektivitet.Oppfølging
+    - Regnskapsfører.AI.Kvalitetskontroll
 
   tracks:
     - product
@@ -84,6 +89,27 @@ definition:
         Fra dashboardet kan regnskapsfører med ett klikk: sende purring,
         opprette ny dokumentforespørsel, eller markere oppgave som fullført.
         Minimerer behov for å navigere inn i hver kunde.
+        
+    - id: cap-005
+      name: "AI-prosesseringsstatus"
+      description: |
+        Viser status på AI-prosessering per kunde: bankutskrifter som 
+        parses, bilag som matches, konteringsforslag som venter på 
+        godkjenning. Regnskapsfører ser "X transaksjoner klar for review".
+        
+    - id: cap-006
+      name: "Bankavstemming-oversikt"
+      description: |
+        Per kunde: status på bankavstemming for periode. Grønt = avstemt,
+        gult = venter på bilag/avklaring, rødt = differanse. Klikk for
+        å gå direkte til bankavstemmingsvisning.
+        
+    - id: cap-007
+      name: "Avklaringskø"
+      description: |
+        Aggregert visning over alle kunder: transaksjoner som trenger
+        avklaring fra kunde. Kan batch-sende avklaringsforespørsler
+        eller håndtere én og én.
 
 # KONTEKSTER (UI)
 

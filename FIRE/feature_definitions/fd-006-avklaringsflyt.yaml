@@ -1,0 +1,242 @@
+# Feature Definition: Avklaringsflyt
+# Strukturert kommunikasjon for regnskapsfaglige spørsmål
+
+id: fd-006
+name: "Avklaringsflyt"
+slug: "avklaringsflyt"
+status: draft
+created: "2026-03-14"
+
+# STRATEGISK KONTEKST
+
+strategic_context:
+  problem_statement: |
+    Mange transaksjoner og bilag krever avklaring fra kunde:
+    - "Var denne middagen firma eller privat?"
+    - "Hvem deltok på representasjonen?"
+    - "Hva er formålet med dette kjøpet?"
+    
+    Regnskapsfører sender e-post, kunden svarer ustrukturert (eller 
+    glemmer), og det blir mye frem-og-tilbake. Svar arkiveres ikke
+    systematisk og kan ikke gjenbrukes for fremtidige lignende saker.
+
+  market_context: |
+    Ingen regnskapsverktøy har strukturert avklaringsflyt. Alt går
+    via e-post eller telefon. Andre bransjer (bank, forsikring) har
+    vist at strukturerte spørsmål med forhåndsdefinerte svar gir
+    bedre datakvalitet og raskere behandling.
+
+  contributes_to:
+    - Regnskapsfører.Avklaring.Effektivitet
+    - Kunde.Kommunikasjon.Enkelhet
+    - AI.Læring.HistoriskeAvklaringer
+    - Compliance.Dokumentasjon.Fradrag
+
+  tracks:
+    - product
+
+  success_metrics:
+    - metric: "Svartid på avklaringer"
+      target: "Median < 24 timer"
+      measurement: "Tid fra spørsmål sendt til svar mottatt"
+    - metric: "Andel fullstendige svar"
+      target: "> 90%"
+      measurement: "Svar som ikke krever oppfølging"
+    - metric: "Gjenbruk av avklaringer"
+      target: "30% automatisk håndtert basert på historikk"
+      measurement: "Lignende transaksjoner løst uten nytt spørsmål"
+
+# DEFINISJON
+
+definition:
+  job_to_be_done: |
+    Når regnskapsfører (eller AI) trenger informasjon fra kunde for å
+    bokføre korrekt, vil de sende et strukturert spørsmål som kunden
+    enkelt kan besvare, slik at svaret er komplett og brukbart første gang.
+
+  solution_approach: |
+    Strukturerte avklaringsforespørsler med forhåndsdefinerte spørsmålstyper
+    og svaralternativer. Kunden ser enkle valg i portalen. Svar lagres
+    og kobles til transaksjon. Historikk brukes for AI-læring og 
+    automatisk håndtering av lignende fremtidige transaksjoner.
+
+  capabilities:
+    - id: cap-001
+      name: "Avklaringstyper"
+      description: |
+        Forhåndsdefinerte avklaringstyper med tilpassede spørsmål:
+        - Privat/firma: "Er dette et privat eller firmarelatert kjøp?"
+        - Representasjon: "Hvem deltok? Hva var formålet?"
+        - Formål: "Hva er formålet med dette kjøpet?"
+        - Beløpsfordeling: "Fordel beløpet mellom kategorier"
+        - Annet: Fritekst-spørsmål
+        
+    - id: cap-002
+      name: "Smart spørsmålsgenerering"
+      description: |
+        AI foreslår avklaringsbehov basert på transaksjon:
+        - Restaurant over 1000 kr → representasjon-spørsmål
+        - Elektronikk → privat/firma-spørsmål
+        - Reise → formål + deltakere
+        Regnskapsfører kan godkjenne eller justere før sending.
+
+    - id: cap-003
+      name: "Kunde-besvarelse"
+      description: |
+        Kunden ser avklaring i portalen med enkle valg:
+        - Radioknapper for ja/nei/alternativ
+        - Tekstfelt for deltakernavn
+        - Filopplasting for tilleggsdokumentasjon
+        - "Vet ikke / må sjekke" med påminnelse
+        
+    - id: cap-004
+      name: "Svar-validering"
+      description: |
+        System validerer at svar er komplett:
+        - Representasjon krever deltakernavn + antall
+        - Beløpsfordeling må summere til totalbeløp
+        - Fradragsrelevante felt må fylles ut
+        Advarer kunde hvis svar er ufullstendig.
+
+    - id: cap-005
+      name: "Avklaringshistorikk"
+      description: |
+        Alle avklaringer lagres med kontekst:
+        - Transaksjon + bilag
+        - Spørsmål stilt
+        - Svar mottatt
+        - Resultat (kontering, fradrag)
+        Søkbar historikk for fremtidig referanse.
+
+    - id: cap-006
+      name: "AI-læring fra avklaringer"
+      description: |
+        Systemet lærer fra historiske avklaringer:
+        - "Lignende transaksjon (Egon, middag, ~2000 kr) ble sist 
+           ført som representasjon med 50% fradrag"
+        - Foreslår automatisk neste gang, men ber kun om bekreftelse
+        Reduserer antall fulle avklaringer over tid.
+
+    - id: cap-007
+      name: "Batch-avklaringer"
+      description: |
+        Flere avklaringer kan sendes samlet:
+        "Vi trenger avklaring på 5 transaksjoner - se portal"
+        Kunden ser samlet liste og kan besvare alle på én gang.
+        Effektivt for månedlig gjennomgang.
+
+# KONTEKSTER (UI)
+
+contexts:
+  - id: ctx-001
+    name: "Opprett avklaring"
+    description: |
+      Regnskapsfører oppretter avklaring for transaksjon. Velger
+      type, ser foreslåtte spørsmål, kan justere, og sender.
+    ui_location: "Transaksjon → Trenger avklaring"
+    access_control:
+      - "Regnskapsfører"
+    key_interactions:
+      - "Velg avklaringstype"
+      - "Se/rediger foreslåtte spørsmål"
+      - "Legg til kommentar"
+      - "Send til kunde"
+
+  - id: ctx-002
+    name: "Besvare avklaring (kunde)"
+    description: |
+      Kundens visning av avklaringsforespørsel. Enkelt layout med
+      spørsmål, svaralternativer, og send-knapp.
+    ui_location: "Kundeportal → Mine oppgaver → Avklaringer"
+    access_control:
+      - "Kunde-bruker"
+    key_interactions:
+      - "Les spørsmål og kontekst"
+      - "Velg/fyll ut svar"
+      - "Last opp evt. dokumentasjon"
+      - "Send svar"
+
+  - id: ctx-003
+    name: "Avklaringskø"
+    description: |
+      Regnskapsførers oversikt over alle ventende avklaringer på
+      tvers av kunder. Kan filtrere på type, kunde, alder.
+    ui_location: "Dashboard → Avklaringer"
+    access_control:
+      - "Regnskapsfører"
+    key_interactions:
+      - "Se alle ventende avklaringer"
+      - "Filtrer på kunde/type"
+      - "Send påminnelse"
+      - "Se mottatte svar"
+
+# AVKLARINGSTYPER
+
+clarification_types:
+  - type: "private_or_business"
+    name: "Privat eller firma"
+    questions:
+      - "Er dette et privat eller firmarelatert kjøp?"
+    options:
+      - label: "Firma - 100% fradrag"
+        value: "business"
+        deduction: 1.0
+      - label: "Privat - ikke fradrag"
+        value: "private"
+        deduction: 0.0
+      - label: "Delvis - oppgi fordeling"
+        value: "mixed"
+        requires: "percentage_input"
+    triggers:
+      - "Elektronikk"
+      - "Klær"
+      - "Diverse kjøp"
+
+  - type: "representation"
+    name: "Representasjon"
+    questions:
+      - "Hvem deltok på arrangementet?"
+      - "Hva var formålet med representasjonen?"
+    required_fields:
+      - "participants_names"
+      - "participant_count"
+      - "purpose"
+    triggers:
+      - "Restaurant"
+      - "Beløp > 500 per person estimert"
+    deduction_rules:
+      - "Mat + drikke: 50% fradrag"
+      - "Kun alkoholholdig drikke: 0% fradrag"
+
+  - type: "travel_purpose"
+    name: "Reiseformål"
+    questions:
+      - "Hva var formålet med reisen?"
+      - "Var det kombinert med privat?"
+    options:
+      - label: "100% jobb"
+        value: "business_full"
+      - label: "Kombinert - oppgi jobbrelatert andel"
+        value: "mixed"
+    triggers:
+      - "Fly"
+      - "Hotell"
+      - "Tog"
+      - "Bil (leie)"
+
+  - type: "amount_breakdown"
+    name: "Beløpsfordeling"
+    questions:
+      - "Fordel beløpet mellom kategoriene"
+    input_type: "line_items"
+    triggers:
+      - "Faktura med flere poster"
+      - "Samletransaksjon"
+
+  - type: "general"
+    name: "Generelt spørsmål"
+    questions:
+      - "Fritekst fra regnskapsfører"
+    input_type: "free_text"
+    triggers:
+      - "Manuelt valgt av regnskapsfører"

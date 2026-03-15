@@ -1,0 +1,129 @@
+# Regelkonfigurasjon: Enkelt AS uten MVA og uten ansatte
+# Prosessmodell: Årsbasert
+#
+# Denne filen definerer sjekklisten som genereres for kunder med denne profilen.
+# Nye selskapstyper = ny regelfil. Reglene er additive: grunnregler + MVA-regler + lønnsregler.
+
+id: enkelt-as
+navn: Enkelt AS uten MVA
+beskrivelse: Årlig sjekkliste for aksjeselskap uten MVA-registrering og uten ansatte
+
+# Matching-kriterier: hvilke selskaper denne regelen gjelder for
+krav:
+  selskapstype: AS
+  mva_registrert: false
+  har_ansatte: false
+  prosessmodell: aarsbasert
+
+# Frister som gjelder for denne selskapstypen
+frister:
+  skattemelding: "05-31"       # 31. mai
+  generalforsamling: "06-30"   # 30. juni
+  aarsregnskap: "07-31"        # 31. juli til Brønnøysund
+
+oppgaver:
+  - id: aapningsbalanse
+    tittel: Last opp åpningsbalanse
+    beskrivelse: Balanse per 31.12 forrige år (eller stiftelsesdato for nye selskaper)
+    hjelpetekst: >
+      Åpningsbalansen er utgangspunktet for regnskapet ditt — den forteller oss hva
+      selskapet eide (eiendeler), skyldte (gjeld) og hadde i egenkapital ved starten av
+      regnskapsåret. Uten denne kan vi ikke begynne å føre årets regnskap.
+
+      Har selskapet hatt regnskapsfører tidligere? Be om årsregnskapet eller saldobalanse
+      per 31.12 fra forrige regnskapsfører. For nylig stiftede selskaper holder det med
+      dokumentasjon på innbetalt aksjekapital (f.eks. kvittering fra banken).
+
+      Last opp som PDF.
+    type: dokument_opplasting
+    rekkefølge: 1
+    paakrevd: true
+    frist_relativ: "01-31"  # Innen utgangen av januar
+
+  - id: bilag
+    tittel: Last opp bilag
+    beskrivelse: Alle kvitteringer og fakturaer (inn og ut) for regnskapsåret
+    hjelpetekst: >
+      Last opp alle kvitteringer og fakturaer du har mottatt eller sendt i løpet av året.
+      Dette inkluderer innkjøpsfakturaer, salgsfakturaer, kvitteringer for utlegg,
+      og eventuelle kreditnotaer. Det er bedre å laste opp for mye enn for lite -
+      regnskapsfører sorterer og bokfører.
+    type: dokument_opplasting
+    rekkefølge: 2
+    paakrevd: true
+    frist_relativ: "02-28"  # Innen utgangen av februar
+
+  - id: bankutskrifter
+    tittel: Last opp bankutskrifter
+    beskrivelse: Komplett bankutskrift for alle konti, hele året
+    hjelpetekst: >
+      Last ned og last opp bankutskrift for alle bedriftens bankkonti for hele
+      regnskapsåret (1. januar - 31. desember). De fleste banker lar deg eksportere
+      dette som PDF fra nettbanken. Husk alle konti - driftskonto, skattetrekkskonto,
+      sparekonto osv.
+    type: dokument_opplasting
+    rekkefølge: 3
+    paakrevd: true
+    frist_relativ: "02-28"
+
+  - id: kontoutskrift-31-12
+    tittel: Bekreft kontoutskrift 31.12
+    beskrivelse: Bankbalanse per årsslutt for avstemming
+    hjelpetekst: >
+      Vi trenger saldo på alle bankkonti per 31. desember for å avstemme regnskapet.
+      Du kan laste opp et skjermbilde av saldo fra nettbanken, eller eksportere
+      en kontoutskrift som viser saldo per 31.12.
+    type: dokument_opplasting
+    rekkefølge: 4
+    paakrevd: true
+    frist_relativ: "01-31"  # Innen utgangen av januar
+
+  - id: låneavtaler
+    tittel: Last opp låneavtaler
+    beskrivelse: Gjeldende låneavtaler med saldo
+    hjelpetekst: >
+      Har selskapet lån, leasing eller andre gjeldsforhold? Last opp låneavtaler
+      og årsoppgave fra banken som viser gjenstående saldo per 31. desember.
+      Gjelder også lån fra aksjonærer til selskapet eller omvendt.
+      Hvis selskapet ikke har lån, kan du bekrefte dette i stedet.
+    type: dokument_opplasting
+    rekkefølge: 5
+    paakrevd: false  # Ikke alle selskaper har lån
+    frist_relativ: "02-28"
+
+  - id: selskapsinformasjon
+    tittel: Bekreft selskapsinformasjon
+    beskrivelse: Aksjonærer, styre, vedtekter - stemmer dette fortsatt?
+    hjelpetekst: >
+      Bekreft at informasjonen vi har om selskapet fortsatt stemmer.
+      Har det vært endringer i aksjonærer, styresammensetning eller vedtekter
+      i løpet av året? Har selskapet endret adresse eller kontaktinformasjon?
+      Har det vært kapitalendringer (emisjon, splitt, spleis)?
+    type: bekreftelse
+    rekkefølge: 6
+    paakrevd: true
+    frist_relativ: "01-31"
+
+  - id: godkjenn-aarsregnskap
+    tittel: Godkjenn årsregnskap
+    beskrivelse: Gjennomgå og godkjenn resultat, balanse og noter
+    hjelpetekst: >
+      Regnskapsfører har utarbeidet årsregnskapet. Gjennomgå resultatregnskap,
+      balanse og noter. Har du spørsmål, kan du stille dem direkte herfra.
+      Når du er fornøyd, godkjenner du årsregnskapet.
+    type: godkjenning
+    rekkefølge: 7
+    paakrevd: true
+    frist_relativ: naar_rf_ferdig  # Aktiveres når RF sender til godkjenning
+
+  - id: signer-generalforsamling
+    tittel: Signer generalforsamlingsprotokoll
+    beskrivelse: Digital signering av protokoll
+    hjelpetekst: >
+      Generalforsamlingsprotokollen dokumenterer at årsregnskapet er godkjent.
+      Gjennomgå protokollen og signer digitalt. Fristen for å avholde
+      ordinær generalforsamling er 30. juni.
+    type: godkjenning
+    rekkefølge: 8
+    paakrevd: true
+    frist_relativ: "06-30"  # Innen 30. juni

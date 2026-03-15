@@ -1,10 +1,11 @@
 # Feature Definition: Godkjenningsflyt
-# Digital godkjenning og signatur for regnskapsrelaterte dokumenter
+# Digital godkjenning for regnskapsrelaterte dokumenter og AI-forslag
 
 id: fd-004
 name: "Godkjenningsflyt"
 slug: "godkjenningsflyt"
 status: draft
+updated: "2026-03-14"
 
 # STRATEGISK KONTEKST
 
@@ -15,16 +16,19 @@ strategic_context:
     signerer, scanner, sender e-post. Eller verst: glemmer. Prosessen
     tar dager/uker, og regnskapsfører har ingen oversikt over hvem
     som har signert og hvem som venter.
+    
+    I tillegg krever AI-drevet regnskapsføring en kvalitetskontroll-flyt
+    der regnskapsfører godkjenner automatisk genererte posteringer.
 
   market_context: |
     BankID-signering og e-signatur er utbredt i Norge (lån, forsikring,
     offentlige tjenester). Regnskapsbransjen bruker det delvis for
-    årsoppgjør, men ad-hoc. Det mangler en integrert flyt der 
-    godkjenninger er sporbare, påminnelser automatiseres, og status
-    er synlig for alle parter.
+    årsoppgjør, men ad-hoc. Med AI-automatisering trengs en ny type
+    godkjenning: effektiv kvalitetskontroll av batch-posteringer.
 
   contributes_to:
     - Regnskapsfører.Signatur.Effektivitet
+    - Regnskapsfører.QA.AIGodkjenning
     - Kunde.Godkjenning.Enkelhet
     - Compliance.Revisjon.Sporbarhet
 

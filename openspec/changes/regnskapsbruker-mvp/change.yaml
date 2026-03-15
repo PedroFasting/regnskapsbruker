@@ -1,0 +1,21 @@
+name: regnskapsbruker-mvp
+schema: spec-driven
+created: "2026-03-14"
+status: ready-for-implementation
+artifacts:
+  - id: proposal
+    type: proposal
+    status: done
+    path: proposal.md
+  - id: specs
+    type: specs
+    status: done
+    path: specs/
+  - id: design
+    type: design
+    status: done
+    path: design.md
+  - id: tasks
+    type: tasks
+    status: done
+    path: tasks.md

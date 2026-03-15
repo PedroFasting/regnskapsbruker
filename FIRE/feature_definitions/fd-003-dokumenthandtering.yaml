@@ -1,10 +1,11 @@
 # Feature Definition: Dokumenthåndtering
-# Dokumentforespørsel, mottak og arkivering
+# Bilag og bankutskrift-håndtering med AI-parsing
 
 id: fd-003
 name: "Dokumenthåndtering"
 slug: "dokumenthandtering"
 status: draft
+updated: "2026-03-14"
 
 # STRATEGISK KONTEKST
 
@@ -16,18 +17,21 @@ strategic_context:
     kommer inn. Kunden vet ikke om dokumentet er mottatt, riktig 
     format, eller om noe mangler. Resultatet er dobbeltarbeid og
     forsinkelser.
+    
+    Med AI-parsing og automatisk matching kan dokumenter prosesseres
+    automatisk og kobles til transaksjoner uten manuelt arbeid.
 
   market_context: |
     Dokumenthåndtering er kjernen i regnskapsarbeid, men verktøyene
     er fragmenterte. Regnskapssystemene fokuserer på bilagsføring,
-    ikke på innsamling. Dedikerte dokumentsystemer finnes, men de er
-    sjelden integrert i kundeportaler. Muligheten ligger i å koble
-    dokumentinnsamling direkte til oppgaveflyt.
+    ikke på innsamling. OCR og AI gjør det nå mulig å automatisere
+    kategorisering og matching som tidligere krevde manuelt arbeid.
 
   contributes_to:
     - Regnskapsfører.Dokumentmottak.Effektivitet
     - Kunde.Levering.Enkelhet
-    - Compliance.Arkivering.Sporbarhet
+    - AI.Parsing.Bilag
+    - AI.Matching.TransaksjonBilag
 
   tracks:
     - product
@@ -89,13 +93,27 @@ definition:
         tilknyttet periode (måned/år). Forberedelse for arkivering.
 
     - id: cap-005
-      name: "OCR og søk"
+      name: "OCR og AI-parsing"
       description: |
         Opplastede dokumenter kjøres gjennom OCR (tekstgjenkjenning).
-        Innholdet blir søkbart: regnskapsfører kan søke "faktura 12345"
-        og finne dokumentet selv om navnet er "IMG_20250315.jpg".
+        AI ekstraherer: beløp, dato, leverandør, MVA, og kategoriserer
+        automatisk. Парsede felt vises og kan korrigeres manuelt.
 
     - id: cap-006
+      name: "Automatisk transaksjon-matching"
+      description: |
+        AI matcher bilag mot banktransksjoner basert på beløp, dato,
+        og leverandørnavn. Viser foreslåtte matches med konfidens-score.
+        Regnskapsfører godkjenner eller velger alternativ transaksjon.
+        
+    - id: cap-007
+      name: "Bankutskrift-parsing"
+      description: |
+        Bankutskrifter (CSV/PDF) parses automatisk til strukturerte
+        transaksjoner. Støtter norske banker (DNB, Nordea, SpareBank 1,
+        etc.). Viser parsing-status og eventuelle feil/advarsler.
+
+    - id: cap-008
       name: "Dokumentarkiv"
       description: |
         Alle dokumenter arkiveres per kunde med full historikk. Sortert

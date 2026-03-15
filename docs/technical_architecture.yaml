@@ -1,38 +1,45 @@
-# Technical Architecture: Regnskapsbruker MVP
-# Arkitektur, teknologivalg og integrasjoner
+# Technical Architecture: Regnskapsbruker MVP v2
+# AI-drevet regnskapsassistent med samhandlingsplattform
 
-id: tech-architecture-v1
-version: "0.1"
+id: tech-architecture-v2
+version: "0.2"
 status: draft
 created_at: "2026-02-10"
-updated_at: "2026-02-10"
+updated_at: "2026-03-14"
 
 # ============================================================================
 # EXECUTIVE SUMMARY
 # ============================================================================
 
 summary: |
-  MVP-arkitektur fokuserer på hastighet til marked, lave driftskostnader,
-  og enkelhet. Vi velger moderne, velprøvde teknologier som en utvikler
-  kan håndtere effektivt.
+  AI-drevet regnskapsplattform med tosidig samhandling mellom regnskapsfører og kunde.
   
-  Stack: Next.js + Supabase + Vercel
+  Kjernefunksjonalitet:
+  - Opplasting av åpningsbalanse og bankutskrifter
+  - LLM-parsing av bankutskrifter til strukturerte transaksjoner
+  - AI-matching av bilag mot transaksjoner
+  - Samhandlingsflyt for mangler og avklaringer
+  - Automatisk konteringsforslag med kvalitetskontroll
   
-  Fordeler: Rask utvikling, innebygd auth, skalerbar, lav driftskost.
-  Ulemper: Vendor lock-in til Supabase/Vercel (akseptabelt for MVP).
+  Stack: Next.js + Supabase + Vercel + OpenAI/Claude API
+  
+  Fordeler: Rask utvikling, AI-differensiering, skalerbar.
+  Ulemper: LLM-kostnader, nøyaktighetsrisiko (mitigeres med QA-flyt).
 
 # ============================================================================
 # ARCHITECTURE OVERVIEW
 # ============================================================================
 
 architecture:
-  style: "Monolith-first, modular design"
+  style: "Monolith-first, modular design with AI processing pipeline"
   
   philosophy: |
     For MVP velger vi enkelhet over skalerbarhet. En monolittisk 
     applikasjon er enklere å utvikle, deploye og debugge enn 
     microservices. Vi strukturerer koden modulært slik at vi KAN
     splitte senere om nødvendig.
+    
+    AI-komponenter kjøres asynkront for å håndtere latens og kostnader.
     
   high_level_components:
     - name: "Web Application"
@@ -58,6 +65,110 @@ architecture:
     - name: "Email"
       description: "Transaksjonell e-post for varsler"
       technology: "Resend eller Supabase Edge Functions + SMTP"
+      
+    - name: "AI Processing Engine"
+      description: "LLM-basert parsing, matching og kontering"
+      technology: "OpenAI GPT-4 / Anthropic Claude API"
+      
+    - name: "Background Jobs"
+      description: "Asynkron prosessering av AI-oppgaver"
+      technology: "Supabase Edge Functions / Vercel Cron"
+
+  # ==========================================================================
+  # AI/LLM ARCHITECTURE
+  # ==========================================================================
+  
+  ai_architecture:
+    overview: |
+      AI-komponenter håndterer tre hovedoppgaver:
+      1. Parsing av bankutskrifter (PDF/CSV → strukturerte transaksjoner)
+      2. Matching av bilag mot transaksjoner
+      3. Konteringsforslag basert på kontekst og historikk
+      
+    components:
+      - name: "Bank Statement Parser"
+        description: |
+          Parser bankutskrifter fra ulike banker. CSV-format prioriteres
+          (strukturert, deterministisk). PDF-parsing bruker OCR + LLM.
+        input: "PDF/CSV fil"
+        output: "Array av transaksjoner med dato, beløp, beskrivelse"
+        model: "GPT-4-turbo (for PDF), regelbasert (for CSV)"
+        fallback: "Manuell korreksjon ved lav konfidens"
+        
+      - name: "Voucher Matcher"
+        description: |
+          Matcher opplastede bilag mot banktransaksjoner basert på
+          beløp, dato, og tekstanalyse.
+        input: "Transaksjon + kandidat-bilag"
+        output: "Match-score + foreslått kobling"
+        model: "GPT-4-turbo med function calling"
+        confidence_threshold: 0.85
+        
+      - name: "Auto Accountant"
+        description: |
+          Foreslår kontering (kontonummer, MVA-kode, avdeling) basert på
+          transaksjonstype, historikk, og regnskapsregler.
+        input: "Transaksjon + bilag + kontekst"
+        output: "Konteringsforslag med konfidensnivå"
+        model: "GPT-4-turbo med RAG fra kontoplan"
+        learning: "Lærer fra godkjente posteringer"
+        
+      - name: "Clarification Analyzer"
+        description: |
+          Identifiserer transaksjoner som trenger avklaring (fradrag,
+          privat/firma, representasjon, etc.)
+        input: "Transaksjon + bilag"
+        output: "Avklaringsbehov + foreslåtte spørsmål"
+        triggers:
+          - "Beløp over terskel for visse kategorier"
+          - "Representasjon/gaver/reise"
+          - "Manglende dokumentasjon"
+          - "Tvetydig formål"
+          
+    processing_flow:
+      steps:
+        - step: 1
+          name: "Fil-opplasting"
+          description: "Bruker laster opp bankutskrift (CSV/PDF)"
+          async: false
+          
+        - step: 2
+          name: "Parsing"
+          description: "Fil sendes til parser, transaksjoner ekstraheres"
+          async: true
+          duration: "2-30 sekunder avhengig av størrelse"
+          
+        - step: 3
+          name: "Matching"
+          description: "Transaksjoner matches mot eksisterende bilag"
+          async: true
+          duration: "1-5 sekunder per transaksjon"
+          
+        - step: 4
+          name: "Kontering"
+          description: "AI foreslår kontering for matchede transaksjoner"
+          async: true
+          
+        - step: 5
+          name: "Avklaring"
+          description: "Identifiser transaksjoner som trenger input fra kunde"
+          async: true
+          
+        - step: 6
+          name: "Kvalitetskontroll"
+          description: "Regnskapsfører gjennomgår og godkjenner"
+          async: false
+          
+    cost_estimation:
+      model: "GPT-4-turbo"
+      cost_per_1k_tokens: 
+        input: 0.01
+        output: 0.03
+      estimated_usage_per_client_per_month:
+        bank_statements: "2-4 filer"
+        vouchers: "20-50 bilag"
+        estimated_tokens: "50K-100K"
+        estimated_cost: "$1-3 per kunde/mnd"
 
   deployment:
     hosting: "Vercel"
@@ -77,6 +188,9 @@ architecture:
 
 data_model:
   entities:
+    # ------------------------------------------------------------------
+    # ORGANIZATION & USERS
+    # ------------------------------------------------------------------
     - name: "Organization"
       description: "Regnskapsbyrå"
       fields:
@@ -142,6 +256,12 @@ data_model:
         - name: status
           type: enum
           values: ["active", "inactive", "archived"]
+        - name: fiscal_year_start
+          type: date
+          description: "Start av regnskapsår"
+        - name: chart_of_accounts
+          type: jsonb
+          description: "Kontoplan for kunden"
         - name: created_at
           type: timestamp
           
@@ -159,15 +279,412 @@ data_model:
           required: true
         - name: name
           type: string
+        - name: role
+          type: enum
+          values: ["owner", "finance", "employee"]
         - name: invited_at
           type: timestamp
         - name: activated_at
           type: timestamp
         - name: last_login
           type: timestamp
+    
+    # ------------------------------------------------------------------
+    # ACCOUNTING CORE
+    # ------------------------------------------------------------------
+    - name: "OpeningBalance"
+      description: "Åpningsbalanse for klient"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: fiscal_year
+          type: integer
+          required: true
+        - name: balance_date
+          type: date
+          required: true
+        - name: accounts
+          type: jsonb
+          description: "Array av {account_code, account_name, debit, credit}"
+        - name: source_file_id
+          type: uuid
+          foreign_key: Document.id
+          nullable: true
+        - name: status
+          type: enum
+          values: ["draft", "confirmed"]
+        - name: confirmed_by
+          type: uuid
+          foreign_key: User.id
+          nullable: true
+        - name: created_at
+          type: timestamp
           
+    - name: "BankStatement"
+      description: "Opplastet bankutskrift"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: uploaded_by
+          type: uuid
+          description: "User.id eller ClientUser.id"
+        - name: uploaded_by_type
+          type: enum
+          values: ["user", "client_user"]
+        - name: bank_name
+          type: string
+          description: "DNB, Nordea, SpareBank 1, etc."
+        - name: account_number
+          type: string
+        - name: period_start
+          type: date
+        - name: period_end
+          type: date
+        - name: file_name
+          type: string
+        - name: file_path
+          type: string
+        - name: file_type
+          type: enum
+          values: ["csv", "pdf", "xlsx"]
+        - name: parse_status
+          type: enum
+          values: ["pending", "processing", "completed", "failed", "needs_review"]
+        - name: parse_confidence
+          type: decimal
+          description: "0.0 - 1.0"
+        - name: error_message
+          type: text
+          nullable: true
+        - name: created_at
+          type: timestamp
+          
+    - name: "BankTransaction"
+      description: "Enkelt transaksjon parset fra bankutskrift"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: bank_statement_id
+          type: uuid
+          foreign_key: BankStatement.id
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: transaction_date
+          type: date
+          required: true
+        - name: booking_date
+          type: date
+        - name: amount
+          type: decimal
+          required: true
+          description: "Positivt = inn, negativt = ut"
+        - name: description
+          type: string
+        - name: reference
+          type: string
+          description: "KID, referansenummer, etc."
+        - name: counterparty
+          type: string
+          description: "Mottaker/avsender hvis parset"
+        - name: category_guess
+          type: string
+          description: "AI-gjetning på kategori"
+        - name: status
+          type: enum
+          values: ["unmatched", "matched", "needs_clarification", "posted", "ignored"]
+        - name: match_confidence
+          type: decimal
+          description: "Konfidens på matching 0.0-1.0"
+        - name: created_at
+          type: timestamp
+          
+    - name: "Voucher"
+      description: "Bilag/kvittering lastet opp av kunde eller regnskapsfører"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: uploaded_by
+          type: uuid
+        - name: uploaded_by_type
+          type: enum
+          values: ["user", "client_user"]
+        - name: file_name
+          type: string
+        - name: file_path
+          type: string
+        - name: file_type
+          type: string
+          description: "MIME type"
+        - name: voucher_date
+          type: date
+          description: "Dato på bilaget (parset eller manuelt)"
+        - name: voucher_amount
+          type: decimal
+          description: "Beløp på bilaget (parset eller manuelt)"
+        - name: vendor
+          type: string
+          description: "Leverandør/butikk"
+        - name: description
+          type: text
+        - name: vat_amount
+          type: decimal
+          description: "MVA-beløp hvis parset"
+        - name: vat_rate
+          type: decimal
+          description: "MVA-sats (0.25, 0.15, 0.12, 0)"
+        - name: ocr_text
+          type: text
+          description: "Rå OCR-tekst fra bilaget"
+        - name: parse_status
+          type: enum
+          values: ["pending", "completed", "failed"]
+        - name: status
+          type: enum
+          values: ["unmatched", "matched", "needs_info", "archived"]
+        - name: created_at
+          type: timestamp
+          
+    - name: "TransactionMatch"
+      description: "Kobling mellom transaksjon og bilag"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: transaction_id
+          type: uuid
+          foreign_key: BankTransaction.id
+        - name: voucher_id
+          type: uuid
+          foreign_key: Voucher.id
+        - name: match_type
+          type: enum
+          values: ["auto", "manual", "suggested"]
+        - name: confidence
+          type: decimal
+          description: "AI-konfidens 0.0-1.0"
+        - name: status
+          type: enum
+          values: ["suggested", "confirmed", "rejected"]
+        - name: confirmed_by
+          type: uuid
+          nullable: true
+        - name: created_at
+          type: timestamp
+          
+    - name: "AccountingEntry"
+      description: "Bokføringsforslag for en transaksjon"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: transaction_id
+          type: uuid
+          foreign_key: BankTransaction.id
+        - name: voucher_id
+          type: uuid
+          foreign_key: Voucher.id
+          nullable: true
+        - name: account_code
+          type: string
+          required: true
+          description: "Kontonummer fra kontoplan"
+        - name: account_name
+          type: string
+        - name: debit
+          type: decimal
+        - name: credit
+          type: decimal
+        - name: vat_code
+          type: string
+          description: "MVA-kode"
+        - name: vat_amount
+          type: decimal
+        - name: department
+          type: string
+          nullable: true
+        - name: project
+          type: string
+          nullable: true
+        - name: description
+          type: text
+        - name: source
+          type: enum
+          values: ["ai_suggested", "manual", "rule_based"]
+        - name: confidence
+          type: decimal
+        - name: status
+          type: enum
+          values: ["suggested", "approved", "rejected", "modified"]
+        - name: approved_by
+          type: uuid
+          nullable: true
+        - name: created_at
+          type: timestamp
+          
+    # ------------------------------------------------------------------
+    # COLLABORATION & CLARIFICATION
+    # ------------------------------------------------------------------
+    - name: "Task"
+      description: "Oppgave/forespørsel mellom regnskapsfører og kunde"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
+        - name: created_by
+          type: uuid
+          foreign_key: User.id
+        - name: type
+          type: enum
+          values: ["missing_voucher", "clarification", "approval", "general"]
+        - name: related_transaction_id
+          type: uuid
+          foreign_key: BankTransaction.id
+          nullable: true
+        - name: related_voucher_id
+          type: uuid
+          foreign_key: Voucher.id
+          nullable: true
+        - name: title
+          type: string
+          required: true
+        - name: description
+          type: text
+        - name: priority
+          type: enum
+          values: ["low", "medium", "high", "urgent"]
+        - name: due_date
+          type: date
+        - name: status
+          type: enum
+          values: ["pending", "in_progress", "waiting_response", "resolved", "cancelled"]
+        - name: auto_generated
+          type: boolean
+          default: false
+          description: "Om oppgaven ble generert automatisk av AI"
+        - name: created_at
+          type: timestamp
+        - name: resolved_at
+          type: timestamp
+          nullable: true
+          
+    - name: "Clarification"
+      description: "Avklaringsforespørsel for spesifikke regnskapsspørsmål"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: task_id
+          type: uuid
+          foreign_key: Task.id
+        - name: clarification_type
+          type: enum
+          values: ["private_or_business", "deduction_eligibility", "participant_info", "purpose", "amount_breakdown", "other"]
+        - name: question
+          type: text
+          required: true
+        - name: options
+          type: jsonb
+          description: "Forhåndsdefinerte svaralternativer hvis aktuelt"
+        - name: answer
+          type: text
+          nullable: true
+        - name: answered_by
+          type: uuid
+          nullable: true
+        - name: answered_at
+          type: timestamp
+          nullable: true
+        - name: affects_deduction
+          type: boolean
+          default: false
+        - name: deduction_percentage
+          type: decimal
+          nullable: true
+          description: "Fradragsprosent basert på svar"
+          
+    - name: "DeductionRule"
+      description: "Regler for fradragsbehandling"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: organization_id
+          type: uuid
+          foreign_key: Organization.id
+          nullable: true
+          description: "null = global regel"
+        - name: category
+          type: string
+          required: true
+          description: "representasjon, gave, reise, etc."
+        - name: condition
+          type: jsonb
+          description: "Betingelser for når regelen gjelder"
+        - name: deduction_percentage
+          type: decimal
+        - name: requires_documentation
+          type: jsonb
+          description: "Hvilken dokumentasjon som kreves"
+        - name: requires_clarification
+          type: boolean
+        - name: clarification_questions
+          type: jsonb
+          description: "Standard spørsmål å stille"
+        - name: account_code
+          type: string
+        - name: vat_code
+          type: string
+        - name: is_active
+          type: boolean
+          default: true
+          
+    - name: "TaskComment"
+      description: "Kommentarer/meldinger på en oppgave"
+      fields:
+        - name: id
+          type: uuid
+          primary_key: true
+        - name: task_id
+          type: uuid
+          foreign_key: Task.id
+        - name: author_id
+          type: uuid
+        - name: author_type
+          type: enum
+          values: ["user", "client_user", "system"]
+        - name: content
+          type: text
+          required: true
+        - name: attachments
+          type: jsonb
+          description: "Array av file paths"
+        - name: created_at
+          type: timestamp
+          
+    # ------------------------------------------------------------------
+    # LEGACY/COMPATIBILITY (fra v1)
+    # ------------------------------------------------------------------
     - name: "DocumentRequest"
-      description: "Forespørsel om dokument fra regnskapsfører til kunde"
+      description: "Forespørsel om dokument fra regnskapsfører til kunde (legacy)"
+      deprecated: true
+      migrate_to: "Task"
       fields:
         - name: id
           type: uuid
@@ -200,53 +717,37 @@ data_model:
           type: timestamp
           
     - name: "Document"
-      description: "Opplastet dokument"
+      description: "Opplastet dokument (generisk)"
       fields:
         - name: id
           type: uuid
           primary_key: true
+        - name: client_id
+          type: uuid
+          foreign_key: Client.id
         - name: document_request_id
           type: uuid
           foreign_key: DocumentRequest.id
+          nullable: true
+        - name: voucher_id
+          type: uuid
+          foreign_key: Voucher.id
+          nullable: true
         - name: uploaded_by
           type: uuid
-          description: "ClientUser.id som lastet opp"
+        - name: uploaded_by_type
+          type: enum
+          values: ["user", "client_user"]
         - name: file_name
           type: string
         - name: file_path
           type: string
-          description: "Path i Supabase Storage"
         - name: file_size
           type: integer
         - name: mime_type
           type: string
         - name: uploaded_at
           type: timestamp
-          
-    - name: "RequestTemplate"
-      description: "Mal for dokumentforespørsel"
-      fields:
-        - name: id
-          type: uuid
-          primary_key: true
-        - name: organization_id
-          type: uuid
-          foreign_key: Organization.id
-          nullable: true
-          description: "null = global mal"
-        - name: name
-          type: string
-          required: true
-        - name: description
-          type: text
-        - name: example_image_url
-          type: string
-        - name: default_days_until_due
-          type: integer
-          default: 7
-        - name: is_active
-          type: boolean
-          default: true
           
     - name: "Notification"
       description: "E-postvarsler sendt"
@@ -258,7 +759,7 @@ data_model:
           type: string
         - name: type
           type: enum
-          values: ["request_created", "reminder", "submitted", "approved", "rejected"]
+          values: ["task_created", "task_reminder", "clarification_needed", "voucher_missing", "response_received", "period_ready"]
         - name: related_entity_id
           type: uuid
         - name: related_entity_type
@@ -270,13 +771,29 @@ data_model:
           values: ["sent", "delivered", "bounced", "failed"]
 
   relationships:
+    # Core
     - "Organization 1:N User"
     - "Organization 1:N Client"
     - "Client 1:N ClientUser"
-    - "Client 1:N DocumentRequest"
-    - "DocumentRequest 1:N Document"
-    - "User 1:N DocumentRequest (created_by)"
-    - "Organization 1:N RequestTemplate"
+    
+    # Accounting
+    - "Client 1:N OpeningBalance"
+    - "Client 1:N BankStatement"
+    - "BankStatement 1:N BankTransaction"
+    - "Client 1:N Voucher"
+    - "BankTransaction 1:N TransactionMatch"
+    - "Voucher 1:N TransactionMatch"
+    - "BankTransaction 1:N AccountingEntry"
+    
+    # Collaboration
+    - "Client 1:N Task"
+    - "Task 1:1 Clarification"
+    - "Task 1:N TaskComment"
+    - "BankTransaction 0:1 Task"
+    - "Voucher 0:1 Task"
+    
+    # Rules
+    - "Organization 1:N DeductionRule"
 
 # ============================================================================
 # API DESIGN
@@ -301,7 +818,9 @@ api_design:
       - "Admin-rolle kan alt innenfor organization"
       
   key_endpoints:
-    # Regnskapsfører-endepunkt
+    # ------------------------------------------------------------------
+    # CLIENTS & SETUP
+    # ------------------------------------------------------------------
     - path: "/api/clients"
       methods: ["GET", "POST"]
       description: "Liste og opprette kunder"
@@ -312,37 +831,174 @@ api_design:
       description: "Hente, oppdatere, slette kunde"
       auth: "User (accountant)"
       
-    - path: "/api/clients/{id}/requests"
-      methods: ["GET", "POST"]
-      description: "Dokumentforespørsler for kunde"
+    - path: "/api/clients/{id}/opening-balance"
+      methods: ["GET", "POST", "PUT"]
+      description: "Åpningsbalanse for kunde"
       auth: "User (accountant)"
       
-    - path: "/api/requests/{id}"
+    # ------------------------------------------------------------------
+    # BANK STATEMENTS & TRANSACTIONS
+    # ------------------------------------------------------------------
+    - path: "/api/clients/{id}/bank-statements"
+      methods: ["GET", "POST"]
+      description: "Liste og laste opp bankutskrifter"
+      auth: "User (accountant) | ClientUser"
+      
+    - path: "/api/bank-statements/{id}"
+      methods: ["GET", "DELETE"]
+      description: "Hente eller slette bankutskrift"
+      auth: "User (accountant)"
+      
+    - path: "/api/bank-statements/{id}/parse"
+      methods: ["POST"]
+      description: "Trigger AI-parsing av bankutskrift"
+      auth: "User (accountant)"
+      async: true
+      
+    - path: "/api/bank-statements/{id}/transactions"
+      methods: ["GET"]
+      description: "Hente parsede transaksjoner"
+      auth: "User (accountant)"
+      
+    - path: "/api/transactions/{id}"
       methods: ["GET", "PUT"]
-      description: "Hente og oppdatere forespørsel (godkjenne/avvise)"
+      description: "Hente/oppdatere enkelt transaksjon"
       auth: "User (accountant)"
       
-    - path: "/api/templates"
+    - path: "/api/transactions/{id}/match"
+      methods: ["POST"]
+      description: "Kjør AI-matching mot bilag"
+      auth: "User (accountant)"
+      
+    - path: "/api/transactions/{id}/entry"
+      methods: ["GET", "POST", "PUT"]
+      description: "Hente/opprette/oppdatere bokføringsforslag"
+      auth: "User (accountant)"
+      
+    # ------------------------------------------------------------------
+    # VOUCHERS
+    # ------------------------------------------------------------------
+    - path: "/api/clients/{id}/vouchers"
       methods: ["GET", "POST"]
-      description: "Forespørsmaler"
+      description: "Liste og laste opp bilag"
+      auth: "User (accountant) | ClientUser"
+      
+    - path: "/api/vouchers/{id}"
+      methods: ["GET", "PUT", "DELETE"]
+      description: "Hente, oppdatere, slette bilag"
       auth: "User (accountant)"
       
-    # Kundeportal-endepunkt
+    - path: "/api/vouchers/{id}/parse"
+      methods: ["POST"]
+      description: "Trigger OCR + AI-parsing av bilag"
+      auth: "User (accountant)"
+      async: true
+      
+    # ------------------------------------------------------------------
+    # TASKS & CLARIFICATIONS
+    # ------------------------------------------------------------------
+    - path: "/api/clients/{id}/tasks"
+      methods: ["GET", "POST"]
+      description: "Liste og opprette oppgaver for kunde"
+      auth: "User (accountant)"
+      
+    - path: "/api/tasks/{id}"
+      methods: ["GET", "PUT"]
+      description: "Hente og oppdatere oppgave"
+      auth: "User (accountant) | ClientUser"
+      
+    - path: "/api/tasks/{id}/comments"
+      methods: ["GET", "POST"]
+      description: "Kommentarer på oppgave"
+      auth: "User (accountant) | ClientUser"
+      
+    - path: "/api/tasks/{id}/clarification"
+      methods: ["GET", "PUT"]
+      description: "Avklaringsdetaljer"
+      auth: "User (accountant) | ClientUser"
+      
+    - path: "/api/tasks/generate"
+      methods: ["POST"]
+      description: "AI-generer oppgaver basert på mangler"
+      auth: "User (accountant)"
+      body: "{ client_id, scope: 'missing_vouchers' | 'clarifications' | 'all' }"
+      
+    # ------------------------------------------------------------------
+    # CUSTOMER PORTAL
+    # ------------------------------------------------------------------
+    - path: "/api/portal/dashboard"
+      methods: ["GET"]
+      description: "Kundens dashboard-data"
+      auth: "ClientUser"
+      
     - path: "/api/portal/tasks"
       methods: ["GET"]
       description: "Kundens ventende oppgaver"
       auth: "ClientUser"
       
-    - path: "/api/portal/tasks/{id}/submit"
+    - path: "/api/portal/tasks/{id}/respond"
       methods: ["POST"]
-      description: "Laste opp dokument til oppgave"
+      description: "Kunde svarer på oppgave/avklaring"
       auth: "ClientUser"
       
-    # Webhook/bakgrunn
-    - path: "/api/webhooks/reminder"
+    - path: "/api/portal/vouchers"
+      methods: ["GET", "POST"]
+      description: "Kundens bilag"
+      auth: "ClientUser"
+      
+    - path: "/api/portal/bank-statements"
       methods: ["POST"]
-      description: "Trigger påminnelser (cron)"
-      auth: "Secret key"
+      description: "Kunde laster opp bankutskrift"
+      auth: "ClientUser"
+      
+    # ------------------------------------------------------------------
+    # AI & PROCESSING
+    # ------------------------------------------------------------------
+    - path: "/api/ai/reconcile"
+      methods: ["POST"]
+      description: "Kjør full bankavstemming for periode"
+      auth: "User (accountant)"
+      body: "{ client_id, period_start, period_end }"
+      async: true
+      
+    - path: "/api/ai/suggest-entries"
+      methods: ["POST"]
+      description: "Generer konteringsforslag for transaksjoner"
+      auth: "User (accountant)"
+      body: "{ transaction_ids: [] }"
+      
+    - path: "/api/ai/analyze-deduction"
+      methods: ["POST"]
+      description: "Analyser fradragsbehandling for bilag"
+      auth: "User (accountant)"
+      body: "{ voucher_id, transaction_id }"
+      
+    # ------------------------------------------------------------------
+    # EXPORT & REPORTS
+    # ------------------------------------------------------------------
+    - path: "/api/clients/{id}/export/journal"
+      methods: ["GET"]
+      description: "Eksporter bokføringsjournal"
+      auth: "User (accountant)"
+      query: "{ period_start, period_end, format: 'csv' | 'saf-t' }"
+      
+    - path: "/api/clients/{id}/reconciliation-report"
+      methods: ["GET"]
+      description: "Bankavstemmingsrapport"
+      auth: "User (accountant)"
+      
+    # ------------------------------------------------------------------
+    # WEBHOOKS & BACKGROUND
+    # ------------------------------------------------------------------
+    - path: "/api/webhooks/process-queue"
+      methods: ["POST"]
+      description: "Prosesser asynkrone AI-jobber"
+      auth: "Secret key (cron)"
+      
+    - path: "/api/webhooks/send-reminders"
+      methods: ["POST"]
+      description: "Send påminnelser for forfalt oppgaver"
+      auth: "Secret key (cron)"
 
 # ============================================================================
 # INTEGRATIONS
@@ -356,9 +1012,23 @@ integrations:
       cost: "Inkludert i Supabase (gratis tier: 50k MAU)"
       
     - name: "Supabase Storage"
-      purpose: "Dokumentlagring"
+      purpose: "Dokumentlagring (bilag, bankutskrifter)"
       complexity: low
       cost: "Inkludert (1GB gratis, deretter $0.021/GB)"
+      
+    - name: "OpenAI GPT-4 Turbo"
+      purpose: "AI-parsing, matching, kontering"
+      complexity: medium
+      cost: "$0.01/1K input, $0.03/1K output tokens"
+      estimated_monthly: "$50-200 avhengig av volum"
+      fallback: "Anthropic Claude som backup"
+      notes: |
+        Brukes til:
+        - PDF bankutskrift parsing
+        - Bilag OCR-tekst analyse
+        - Transaksjon-bilag matching
+        - Konteringsforslag
+        - Avklaringsspørsmål generering
       
     - name: "Resend"
       purpose: "Transaksjonell e-post"
@@ -367,8 +1037,14 @@ integrations:
       alternative: "Supabase Edge Functions + SendGrid"
       
   post_mvp_integrations:
+    - name: "Google Cloud Vision / Azure Document Intelligence"
+      purpose: "OCR for bilag (bedre enn GPT-4 Vision for strukturert data)"
+      complexity: medium
+      cost: "$1.50 per 1000 docs"
+      timeline: "Når GPT-4 OCR viser begrensninger"
+      
     - name: "BankID/Signicat"
-      purpose: "Digital signering"
+      purpose: "Digital signering og sterk autentisering"
       complexity: high
       cost: "Oppsett + per-signatur (ca 15-30 kr)"
       timeline: "Etter MVP, når signering blir prioritert"
@@ -377,21 +1053,21 @@ integrations:
         REST API. Må håndtere redirect-flyten og signatur-verifisering.
         
     - name: "Tripletex API"
-      purpose: "Synkronisere kundelister fra regnskapssystem"
+      purpose: "Eksport av bokføringsjournal til regnskapssystem"
       complexity: medium
-      timeline: "2027, basert på kundeetterspørsel"
+      timeline: "Q3 2026"
       notes: "Tripletex har åpen API. Krever OAuth 2.0 oppsett."
       
     - name: "Fiken API"
-      purpose: "Alternativ regnskapssystem-integrasjon"
+      purpose: "Alternativ regnskapssystem-eksport"
       complexity: medium
-      timeline: "2027"
+      timeline: "Q4 2026"
       
-    - name: "OCR (Google Cloud Vision)"
-      purpose: "Tekstgjenkjenning for søkbar arkivering"
-      complexity: medium
-      cost: "First 1000 gratis, deretter $1.50 per 1000 docs"
-      timeline: "Post-MVP, når arkiv-søk blir prioritert"
+    - name: "Sbanken/DNB/Nordea Open Banking"
+      purpose: "Direkte henting av transaksjoner (erstatter fil-opplasting)"
+      complexity: high
+      timeline: "2027"
+      notes: "PSD2 APIs. Krever lisensering og avtaler."
 
 # ============================================================================
 # SECURITY
